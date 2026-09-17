@@ -83,20 +83,20 @@ The target tier model is:
 
 ## Change Records
 
-- `docs/harness/mock-payment-instant-subscription-activation-plan-2026-06-08.md`
-- `docs/harness/mock-payment-instant-subscription-activation-implementation-2026-06-08.md`
-- `docs/harness/toss-payments-billing-integration-plan-2026-06-03.md`
-- `docs/harness/toss-payments-billing-auth-phase1-implementation-2026-06-08.md`
-- `docs/harness/subscription-tier-payment-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-verification-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-feedback-improvement-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-feedback-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
-- `docs/harness/vercel-supabase-deployment-implementation-2026-06-01.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/manual-subscription-grant-script-2026-06-03.md`
+- `docs/harness/records/billing/mock-payment-instant-subscription-activation-plan-2026-06-08.md`
+- `docs/harness/records/billing/mock-payment-instant-subscription-activation-implementation-2026-06-08.md`
+- `docs/harness/records/billing/toss-payments-billing-integration-plan-2026-06-03.md`
+- `docs/harness/records/billing/toss-payments-billing-auth-phase1-implementation-2026-06-08.md`
+- `docs/harness/records/billing/subscription-tier-payment-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-verification-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-feedback-improvement-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-feedback-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
+- `docs/harness/records/deployment/vercel-supabase-deployment-implementation-2026-06-01.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/billing/manual-subscription-grant-script-2026-06-03.md`
 
 ## Open Risks
 

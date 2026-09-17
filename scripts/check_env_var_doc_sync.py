@@ -53,8 +53,8 @@ NON_SETTINGS_ENV_VARS = {
 # 편집 시 검사를 트리거하는 소스 파일(이 둘이 환경변수의 진실 소스).
 DOC_SET = [
     ".env.example",
-    "ENVIRONMENT_VARIABLE_SETUP.md",
-    "ENVIRONMENT_VARIABLE_RECOMMENDATIONS.md",
+    "docs/guides/ENVIRONMENT_VARIABLE_SETUP.md",
+    "docs/guides/ENVIRONMENT_VARIABLE_RECOMMENDATIONS.md",
     "docs/harness/features/deployment-runtime.md",
 ]
 

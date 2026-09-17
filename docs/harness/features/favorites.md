@@ -54,12 +54,12 @@ As of 2026-06-04, logging out clears the favorite state. `authStore.logout` call
 
 ## Change Records
 
-- `docs/harness/asset-favorites.md`
-- `docs/harness/favorites-clear-on-logout-2026-06-04.md`
-- `docs/harness/favorite-asset-notification-implementation-2026-06-02.md`
-- `docs/harness/mypage-profile-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
+- `docs/harness/records/user-features/asset-favorites.md`
+- `docs/harness/records/user-features/favorites-clear-on-logout-2026-06-04.md`
+- `docs/harness/records/notifications/favorite-asset-notification-implementation-2026-06-02.md`
+- `docs/harness/records/user-features/mypage-profile-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
 
 ## Open Risks
 

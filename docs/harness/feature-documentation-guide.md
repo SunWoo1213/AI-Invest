@@ -71,7 +71,7 @@ For AI report generation and report retrieval, documentation is mandatory before
 
 ## Change Record Rules
 
-Every meaningful harness change should create or update a Markdown record under `docs/harness/`.
+Every meaningful harness change should create or update a Markdown record under `docs/harness/records/<area>/` (for example `docs/harness/records/market-data/`).
 
 Write harness reports, verification summaries, implementation reports, plans, and change records in Korean by default unless the user explicitly requests another language. Keep code identifiers, file paths, commands, API paths, and error strings in their original form.
 
@@ -101,6 +101,6 @@ When a feature changes:
 ## Safety Notes
 
 - Do not inspect `.env` just to document configuration. Document variable names only.
-- Treat `ARCHITECTURE.md` and older specs as background, not authority, when they conflict with current React Vite or FastAPI code.
+- Treat `docs/architecture/ARCHITECTURE.md` and older specs as background, not authority, when they conflict with current React Vite or FastAPI code.
 - Do not rewrite unrelated feature docs while changing one feature.
 - Do not silently delete old change records. If a record is obsolete, add a note explaining what superseded it.

@@ -75,22 +75,22 @@ Document variable names only. Do not write actual client IDs, JWT secrets, token
 
 ## Change Records
 
-- `docs/harness/harness-feature-documentation.md`
-- `docs/harness/google-login-only.md`
-- `docs/harness/google-login-ui-dark-theme-plan-2026-06-03.md`
-- `docs/harness/google-login-ui-dark-theme-implementation-2026-06-03.md`
-- `docs/harness/google-login-duplicate-initialize-guard-2026-06-03.md`
-- `docs/harness/community-comment-reporting.md`
-- `docs/harness/feature-implementation-fixes-2026-05-31.md`
-- `docs/harness/feature-implementation-fixes-verification-2026-05-31.md`
-- `docs/harness/chatbot-feature-implementation-2026-05-31.md`
-- `docs/harness/subscription-tier-payment-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-implementation-2026-06-01.md`
-- `docs/harness/favorite-asset-notification-implementation-2026-06-02.md`
-- `docs/harness/mypage-profile-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
-- `docs/harness/favorite-asset-report-link-notification-implementation-2026-06-09.md`
+- `docs/harness/records/project/harness-feature-documentation.md`
+- `docs/harness/records/auth/google-login-only.md`
+- `docs/harness/records/auth/google-login-ui-dark-theme-plan-2026-06-03.md`
+- `docs/harness/records/auth/google-login-ui-dark-theme-implementation-2026-06-03.md`
+- `docs/harness/records/auth/google-login-duplicate-initialize-guard-2026-06-03.md`
+- `docs/harness/records/user-features/community-comment-reporting.md`
+- `docs/harness/records/project/feature-implementation-fixes-2026-05-31.md`
+- `docs/harness/records/project/feature-implementation-fixes-verification-2026-05-31.md`
+- `docs/harness/records/chatbot/chatbot-feature-implementation-2026-05-31.md`
+- `docs/harness/records/billing/subscription-tier-payment-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-implementation-2026-06-01.md`
+- `docs/harness/records/notifications/favorite-asset-notification-implementation-2026-06-02.md`
+- `docs/harness/records/user-features/mypage-profile-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
+- `docs/harness/records/notifications/favorite-asset-report-link-notification-implementation-2026-06-09.md`
 
 ## Open Risks
 

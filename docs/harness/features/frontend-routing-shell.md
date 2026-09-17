@@ -69,20 +69,20 @@ Current routes:
 
 ## Change Records
 
-- `docs/harness/harness-feature-documentation.md`
-- `docs/harness/google-login-only.md` removed the `/register` route and signup navigation.
-- `docs/harness/main-market-snapshot-and-news.md` added `/market/:ticker` for home index/FX cards.
-- `docs/harness/market-snapshot-history-chart-removal-2026-06-10.md` removed the history chart from `/market/:ticker`, keeping price/change and the dashboard link.
-- `docs/harness/asset-favorites.md` added browser-local favorite asset state and navigation.
-- `docs/harness/chatbot-feature-implementation-2026-05-31.md` added the global chatbot launcher, panel, session state, and route action handling.
-- `docs/harness/subscription-tier-payment-plan-2026-06-01.md` plans pricing/billing routes and tier-based report/chatbot gates.
-- `docs/harness/subscription-tier-payment-implementation-2026-06-01.md` added pricing/billing routes, subscription state, and tier-based shell visibility.
-- `docs/harness/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md` plans provider-backed billing route feedback and post-checkout confirmation behavior.
-- `docs/harness/subscription-tier-payment-provider-db-implementation-2026-06-01.md` sends checkout return URLs and refreshes billing state on success/cancel routes.
-- `docs/harness/vercel-supabase-deployment-implementation-2026-06-01.md` added the Vercel SPA rewrite for hosted route refreshes.
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md` plans API base URL cleanup, route smoke checks, and future `AssetDetail.jsx` decomposition.
-- `docs/harness/project-gap-remediation-phase0-1-implementation-2026-06-02.md` removed page-level localhost API calls from home, login, and market snapshot routes.
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md` plans `AssetDetail.jsx` decomposition, route-level code splitting, and notification settings route ownership cleanup.
+- `docs/harness/records/project/harness-feature-documentation.md`
+- `docs/harness/records/auth/google-login-only.md` removed the `/register` route and signup navigation.
+- `docs/harness/records/market-data/main-market-snapshot-and-news.md` added `/market/:ticker` for home index/FX cards.
+- `docs/harness/records/market-data/market-snapshot-history-chart-removal-2026-06-10.md` removed the history chart from `/market/:ticker`, keeping price/change and the dashboard link.
+- `docs/harness/records/user-features/asset-favorites.md` added browser-local favorite asset state and navigation.
+- `docs/harness/records/chatbot/chatbot-feature-implementation-2026-05-31.md` added the global chatbot launcher, panel, session state, and route action handling.
+- `docs/harness/records/billing/subscription-tier-payment-plan-2026-06-01.md` plans pricing/billing routes and tier-based report/chatbot gates.
+- `docs/harness/records/billing/subscription-tier-payment-implementation-2026-06-01.md` added pricing/billing routes, subscription state, and tier-based shell visibility.
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md` plans provider-backed billing route feedback and post-checkout confirmation behavior.
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-2026-06-01.md` sends checkout return URLs and refreshes billing state on success/cancel routes.
+- `docs/harness/records/deployment/vercel-supabase-deployment-implementation-2026-06-01.md` added the Vercel SPA rewrite for hosted route refreshes.
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md` plans API base URL cleanup, route smoke checks, and future `AssetDetail.jsx` decomposition.
+- `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md` removed page-level localhost API calls from home, login, and market snapshot routes.
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md` plans `AssetDetail.jsx` decomposition, route-level code splitting, and notification settings route ownership cleanup.
 
 ## Open Risks
 

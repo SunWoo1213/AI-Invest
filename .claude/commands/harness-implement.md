@@ -23,7 +23,7 @@ argument-hint: <작업 설명 또는 계획 문서 경로>
 변경에 맞는 최소 검증을 실행한다. 백엔드는 관련 `pytest`, 프론트는 `npm run lint`/`npm run build`. 실행 불가하면 이유를 명시한다.
 
 ## 4. 문서 동기화 (반드시)
-1. `docs/harness/<작업-slug>-implementation-2026-06-02.md`에 한국어 구현 기록 작성: 날짜·목적·변경 파일·동작 변화·검증 결과·미실행 명령과 이유·후속 위험·영향받은 feature 문서 링크.
+1. `docs/harness/records/<영역>/<작업-slug>-implementation-2026-06-02.md`에 한국어 구현 기록 작성: 날짜·목적·변경 파일·동작 변화·검증 결과·미실행 명령과 이유·후속 위험·영향받은 feature 문서 링크.
 2. 해당 `docs/harness/features/*.md`의 본문을 갱신하고 `Change Records`에 이 기록 링크 추가.
 3. `docs/harness/feature-index.md` 항목 갱신. 새 기능 영역이면 새 feature 문서 생성 후 색인에 추가(필요하면 `/feature-doc` 사용).
 4. 폴더 소유권이 바뀌면 가장 가까운 `DEVELOPMENT_DIRECTION.md` 갱신.

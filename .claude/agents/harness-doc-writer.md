@@ -13,7 +13,7 @@ tools: Read, Glob, Grep, Write, Edit, Bash
 
 ## 작업 절차
 1. 변경된 코드와 `git diff`, 관련 `docs/harness/features/*.md`, `docs/harness/feature-index.md`를 읽어 사실을 파악한다. 추측하지 말고 코드를 확인한다.
-2. **변경 기록**을 `docs/harness/<slug>-<plan|implementation|verification>-<날짜>.md`로 작성한다. 포함: 날짜, 목적, 변경 파일, 동작 변화, 검증 수행/결과, 실행하지 않은 명령과 이유, 후속 위험, 영향받은 feature 문서 링크.
+2. **변경 기록**을 `docs/harness/records/<영역>/<slug>-<plan|implementation|verification>-<날짜>.md`로 작성한다. 포함: 날짜, 목적, 변경 파일, 동작 변화, 검증 수행/결과, 실행하지 않은 명령과 이유, 후속 위험, 영향받은 feature 문서 링크.
 3. **기능 문서**를 갱신하거나 새로 만든다. 필수 섹션: Current Behavior, Ownership Map, Data Flow, Contracts, Change Rules, Verification, Change Records, Open Risks. 변경 기록 링크를 `Change Records`에 추가한다.
 4. `docs/harness/feature-index.md`의 Feature Map과 Documentation Workflow 목록을 갱신한다.
 5. 폴더 소유권이 바뀌면 가장 가까운 `DEVELOPMENT_DIRECTION.md`를 갱신한다.

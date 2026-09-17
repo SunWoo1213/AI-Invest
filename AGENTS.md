@@ -10,7 +10,7 @@
 - AI/report pipeline: LangGraph, LangChain, OpenAI API, scheduled/background report generation.
 - Database/runtime support: PostgreSQL via `docker-compose.yml`.
 
-주의: `ARCHITECTURE.md`에는 Next.js/TypeScript 기반 설명이 일부 남아 있지만, 현재 실제 프론트엔드 코드는 `frontend/`의 React + Vite + JavaScript 구조이다. 하네스는 실제 코드 기준으로 작업한다.
+주의: `docs/architecture/ARCHITECTURE.md`에는 Next.js/TypeScript 기반 설명이 일부 남아 있지만, 현재 실제 프론트엔드 코드는 `frontend/`의 React + Vite + JavaScript 구조이다. 하네스는 실제 코드 기준으로 작업한다.
 
 ## 2. Required Pre-Work
 
@@ -19,8 +19,8 @@
 1. `git status --short`로 기존 사용자 변경사항을 확인한다.
 2. `.env` 파일과 API 키, DB 비밀번호, JWT secret 등 시크릿은 출력하지 않는다.
 3. 관련 작업 범위에 따라 다음 문서를 먼저 참고한다.
-   - `ARCHITECTURE.md`
-   - `PROJECT_STRUCTURE_ANALYSIS.md` (파일이 존재할 때)
+   - `docs/architecture/ARCHITECTURE.md`
+   - `docs/architecture/PROJECT_STRUCTURE_ANALYSIS.md` (파일이 존재할 때)
    - 루트 및 하위 폴더의 `DEVELOPMENT_DIRECTION.md`
    - `docs/harness/feature-index.md`
    - 작업 대상 기능의 `docs/harness/features/*.md`
@@ -52,10 +52,14 @@ Project_Finance/
 │  │  ├─ App.jsx               # route composition
 │  │  └─ main.jsx              # React entrypoint
 │  └─ package.json
+├─ docs/
+│  ├─ architecture/            # ARCHITECTURE, CODE_UNDERSTANDING, PROJECT_STRUCTURE_ANALYSIS, 기능 명세
+│  ├─ guides/                  # 환경변수·외부 연동(Gmail, Telegram, Stooq, Vercel/Supabase) 설정 가이드
+│  ├─ deliverables/            # 캡스톤 최종 산출물 7종
+│  └─ harness/                 # feature-index, features/, records/<영역>/ 변경 기록
+├─ scripts/                    # 문서 동기화 검사기, test_api.py / test_db.py 수동 점검 헬퍼
 ├─ docker-compose.yml          # PostgreSQL service
-├─ ARCHITECTURE.md
-├─ PROJECT_STRUCTURE_ANALYSIS.md
-└─ test_api.py, test_db.py     # root-level test helpers
+└─ README.md                   # 프로젝트 소개
 ```
 
 ## 4. Backend Work Rules
@@ -136,7 +140,7 @@ The harness must not:
 - Delete files, clear databases, or drop volumes without explicit user approval.
 - Perform large unrelated refactors.
 - Modify generated logs unless the task specifically concerns logging output.
-- Treat `ARCHITECTURE.md` as more authoritative than current code when they conflict.
+- Treat `docs/architecture/ARCHITECTURE.md` as more authoritative than current code when they conflict.
 
 ## 8. Secret Handling
 
@@ -184,8 +188,8 @@ When reporting work back to the user:
 
 When code changes are made, create or update a Markdown change record so future harness engineering work can reuse the context.
 
-- Store change records under `docs/harness/`.
-- Use one focused file per meaningful change, for example `docs/harness/google-login-only.md`.
+- Store change records under `docs/harness/records/<area>/` (`ai-report`, `market-data`, `chatbot`, `notifications`, `billing`, `auth`, `user-features`, `deployment`, `project`). 새 영역이 필요하면 폴더를 추가하고 `docs/harness/feature-index.md`에 적는다.
+- Use one focused file per meaningful change, for example `docs/harness/records/auth/google-login-only.md`.
 - Include the date, objective, files changed, behavior changes, verification performed, and follow-up risks.
 - Do not include secrets, raw environment values, access tokens, database passwords, or API keys.
 - Write change records in Korean by default, while keeping code identifiers, file paths, commands, API paths, and error strings in their original form.

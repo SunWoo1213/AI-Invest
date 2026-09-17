@@ -8,7 +8,7 @@ The asset detail screen combines market summary, favorite toggling, latest news/
 
 Comment reports are one-per-user per comment. When a comment reaches 100 accumulated reports, the backend automatically deletes that comment.
 
-If an authenticated user requests a report and the latest report is missing, the frontend now shows a scheduled-report-pending state and does not call report generation. Manual report generation is disabled for ordinary authenticated users. This aligns with the target product rule documented in `docs/harness/report-generation-schedule-alignment-plan-2026-06-01.md` and implemented in `docs/harness/report-generation-schedule-alignment-implementation-2026-06-01.md`: user-facing report views read only pre-generated stored reports, while generation runs from the backend scheduler.
+If an authenticated user requests a report and the latest report is missing, the frontend now shows a scheduled-report-pending state and does not call report generation. Manual report generation is disabled for ordinary authenticated users. This aligns with the target product rule documented in `docs/harness/records/ai-report/report-generation-schedule-alignment-plan-2026-06-01.md` and implemented in `docs/harness/records/ai-report/report-generation-schedule-alignment-implementation-2026-06-01.md`: user-facing report views read only pre-generated stored reports, while generation runs from the backend scheduler.
 
 AI report generation is now additionally controlled by backend-only `ENABLE_AI_REPORT_GENERATION`. When it is `false`, scheduled report jobs are not registered and service-level report generation returns before opening a DB session or invoking providers/LLM workflow. Stored report reads remain available.
 
@@ -115,71 +115,71 @@ The report reason selector in `AssetDetail.jsx` does not change the API request 
 
 ## Change Records
 
-- `docs/harness/harness-feature-documentation.md`
-- `docs/harness/google-login-only.md` affects report visibility and authenticated community writes.
-- `docs/harness/latest-context-report-quality.md`
-- `docs/harness/community-comment-reporting.md`
-- `docs/harness/asset-favorites.md`
-- `docs/harness/report-quality-improvement-plan.md`
-- `docs/harness/report-quality-phase-1.md`
-- `docs/harness/report-quality-phase-2.md`
-- `docs/harness/report-quality-fact-checker.md`
-- `docs/harness/report-quality-role-nodes.md`
-- `docs/harness/report-quality-asset-frameworks.md`
-- `docs/harness/report-quality-format-validator.md`
-- `docs/harness/report-quality-framework-format-validation.md`
-- `docs/harness/feature-implementation-fixes-2026-05-31.md`
-- `docs/harness/feature-implementation-fixes-verification-2026-05-31.md`
-- `docs/harness/report-quality-heading-validator-and-neutral-badge.md`
-- `docs/harness/report-quality-follow-up-plan-2026-05-31.md`
-- `docs/harness/report-quality-follow-up-implementation-2026-05-31.md`
-- `docs/harness/chatbot-feature-implementation-2026-05-31.md`
-- `docs/harness/report-generation-schedule-alignment-plan-2026-06-01.md`
-- `docs/harness/report-generation-schedule-alignment-implementation-2026-06-01.md`
-- `docs/harness/report-writing-method-feedback-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-plan-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-feedback-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
-- `docs/harness/vercel-supabase-deployment-implementation-2026-06-01.md`
-- `docs/harness/mypage-profile-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md`
-- `docs/harness/report-scheduler-structured-output-error-fix-2026-06-02.md`
-- `docs/harness/report-generation-env-switch-plan-2026-06-03.md`
-- `docs/harness/report-generation-env-switch-implementation-2026-06-03.md`
-- `docs/harness/report-scheduler-market-cache-miss-fallback-2026-06-04.md`
-- `docs/harness/report-404-and-secret-log-leak-remediation-plan-2026-06-04.md`
-- `docs/harness/report-404-and-secret-log-leak-remediation-implementation-2026-06-04.md`
-- `docs/harness/nvda-report-factchecker-loop-root-cause-2026-06-04.md`
-- `docs/harness/nvda-factchecker-loop-404-remediation-plan-2026-06-04.md`
-- `docs/harness/nvda-factchecker-loop-404-remediation-implementation-2026-06-04.md`
-- `docs/harness/report-max-revisions-increase-to-7-2026-06-04.md`
-- `docs/harness/report-generation-deployment-failure-remediation-plan-2026-06-07.md`
-- `docs/harness/render-standard-market-provider-timeout-remediation-2026-06-07.md`
-- `docs/harness/stooq-timeout-fallback-2026-06-07.md`
-- `docs/harness/demo-free-tier-data-cadence-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-implementation-2026-06-08.md`
-- `docs/harness/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
-- `docs/harness/report-generation-pipeline-diagnosis-2026-06-08.md`
-- `docs/harness/market-snapshot-price-fallback-and-stale-retention-implementation-2026-06-08.md`
-- `docs/harness/report-scheduler-startup-firing-fix-implementation-2026-06-08.md`
-- `docs/harness/asset-display-graph-removal-plan-2026-06-08.md`
-- `docs/harness/asset-display-graph-removal-implementation-2026-06-08.md`
-- `docs/harness/report-backend-generation-failure-analysis-2026-06-08.md`
-- `docs/harness/report-backend-generation-remediation-plan-2026-06-08.md`
-- `docs/harness/favorite-asset-report-link-notification-implementation-2026-06-09.md`
-- `docs/harness/report-evaluator-env-switch-plan-2026-06-09.md`
-- `docs/harness/report-evaluator-env-switch-implementation-2026-06-09.md`
-- `docs/harness/demo-nvda-report-live-market-policy-2026-06-09.md`
-- `docs/harness/demo-nvda-report-live-market-remediation-plan-2026-06-09.md`
-- `docs/harness/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
-- `docs/harness/report-data-as-of-naive-datetime-fix-2026-06-09.md`
-- `docs/harness/report-final-narrative-only-display-implementation-2026-06-09.md`
+- `docs/harness/records/project/harness-feature-documentation.md`
+- `docs/harness/records/auth/google-login-only.md` affects report visibility and authenticated community writes.
+- `docs/harness/records/ai-report/latest-context-report-quality.md`
+- `docs/harness/records/user-features/community-comment-reporting.md`
+- `docs/harness/records/user-features/asset-favorites.md`
+- `docs/harness/records/ai-report/report-quality-improvement-plan.md`
+- `docs/harness/records/ai-report/report-quality-phase-1.md`
+- `docs/harness/records/ai-report/report-quality-phase-2.md`
+- `docs/harness/records/ai-report/report-quality-fact-checker.md`
+- `docs/harness/records/ai-report/report-quality-role-nodes.md`
+- `docs/harness/records/ai-report/report-quality-asset-frameworks.md`
+- `docs/harness/records/ai-report/report-quality-format-validator.md`
+- `docs/harness/records/ai-report/report-quality-framework-format-validation.md`
+- `docs/harness/records/project/feature-implementation-fixes-2026-05-31.md`
+- `docs/harness/records/project/feature-implementation-fixes-verification-2026-05-31.md`
+- `docs/harness/records/ai-report/report-quality-heading-validator-and-neutral-badge.md`
+- `docs/harness/records/ai-report/report-quality-follow-up-plan-2026-05-31.md`
+- `docs/harness/records/ai-report/report-quality-follow-up-implementation-2026-05-31.md`
+- `docs/harness/records/chatbot/chatbot-feature-implementation-2026-05-31.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-implementation-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-feedback-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-feedback-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
+- `docs/harness/records/deployment/vercel-supabase-deployment-implementation-2026-06-01.md`
+- `docs/harness/records/user-features/mypage-profile-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md`
+- `docs/harness/records/ai-report/report-scheduler-structured-output-error-fix-2026-06-02.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-plan-2026-06-03.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-implementation-2026-06-03.md`
+- `docs/harness/records/ai-report/report-scheduler-market-cache-miss-fallback-2026-06-04.md`
+- `docs/harness/records/ai-report/report-404-and-secret-log-leak-remediation-plan-2026-06-04.md`
+- `docs/harness/records/ai-report/report-404-and-secret-log-leak-remediation-implementation-2026-06-04.md`
+- `docs/harness/records/ai-report/nvda-report-factchecker-loop-root-cause-2026-06-04.md`
+- `docs/harness/records/ai-report/nvda-factchecker-loop-404-remediation-plan-2026-06-04.md`
+- `docs/harness/records/ai-report/nvda-factchecker-loop-404-remediation-implementation-2026-06-04.md`
+- `docs/harness/records/ai-report/report-max-revisions-increase-to-7-2026-06-04.md`
+- `docs/harness/records/ai-report/report-generation-deployment-failure-remediation-plan-2026-06-07.md`
+- `docs/harness/records/deployment/render-standard-market-provider-timeout-remediation-2026-06-07.md`
+- `docs/harness/records/market-data/stooq-timeout-fallback-2026-06-07.md`
+- `docs/harness/records/market-data/demo-free-tier-data-cadence-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
+- `docs/harness/records/ai-report/report-generation-pipeline-diagnosis-2026-06-08.md`
+- `docs/harness/records/market-data/market-snapshot-price-fallback-and-stale-retention-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-scheduler-startup-firing-fix-implementation-2026-06-08.md`
+- `docs/harness/records/market-data/asset-display-graph-removal-plan-2026-06-08.md`
+- `docs/harness/records/market-data/asset-display-graph-removal-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-backend-generation-failure-analysis-2026-06-08.md`
+- `docs/harness/records/ai-report/report-backend-generation-remediation-plan-2026-06-08.md`
+- `docs/harness/records/notifications/favorite-asset-report-link-notification-implementation-2026-06-09.md`
+- `docs/harness/records/ai-report/report-evaluator-env-switch-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-evaluator-env-switch-implementation-2026-06-09.md`
+- `docs/harness/records/ai-report/demo-nvda-report-live-market-policy-2026-06-09.md`
+- `docs/harness/records/ai-report/demo-nvda-report-live-market-remediation-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-data-as-of-naive-datetime-fix-2026-06-09.md`
+- `docs/harness/records/ai-report/report-final-narrative-only-display-implementation-2026-06-09.md`
 
 ## Open Risks
 
@@ -194,7 +194,7 @@ The report reason selector in `AssetDetail.jsx` does not change the API request 
 - Asset-specific framework depth validation is deterministic and conservative; it checks section placement and minimal evidence/limitation text, not full analytical quality.
 - Broadening scheduled AI report generation beyond the five representative target tickers remains disabled because it would increase LLM call volume.
 - Startup scheduled report generation is delayed by `REPORT_SCHEDULER_STARTUP_DELAY_SECONDS`, but can still encounter missing provider keys or slow providers. A ticker-level market cache fill handles warm-up race conditions, and US stock snapshots keep primary Finnhub quote data when optional profile/Stooq history calls fail. Primary provider failures still lead to readiness-blocked reports instead of fabricated data.
-- Backend report creation can still fail before persistence because the scheduler-only path must pass runtime switches, provider readiness, OpenAI writer/evaluator calls, deterministic quality gates, and DB commit. `docs/harness/report-backend-generation-failure-analysis-2026-06-08.md` records the current failure taxonomy and `docs/harness/report-backend-generation-remediation-plan-2026-06-08.md` records the recovery plan.
+- Backend report creation can still fail before persistence because the scheduler-only path must pass runtime switches, provider readiness, OpenAI writer/evaluator calls, deterministic quality gates, and DB commit. `docs/harness/records/ai-report/report-backend-generation-failure-analysis-2026-06-08.md` records the current failure taxonomy and `docs/harness/records/ai-report/report-backend-generation-remediation-plan-2026-06-08.md` records the recovery plan.
 - Detail pages no longer trigger manual report generation on 404, so unsupported or not-yet-generated assets can show a pending report state until the scheduler produces a stored report.
 - Free users and users without loaded report entitlement now see a paywall and should not trigger report fetches from the detail page.
-- Remaining report-quality follow-ups are prioritized in `docs/harness/report-quality-follow-up-plan-2026-05-31.md`.
+- Remaining report-quality follow-ups are prioritized in `docs/harness/records/ai-report/report-quality-follow-up-plan-2026-05-31.md`.

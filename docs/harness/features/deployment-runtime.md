@@ -20,13 +20,13 @@ Runtime logging avoids leaking secrets in two layers. (1) Root logging stays at 
 
 ## Ownership Map
 
-- Deployment plan: `docs/harness/vercel-supabase-deployment-plan-2026-06-01.md`
-- Vercel Supabase integration guide: `VERCEL_SUPABASE_INTEGRATION_GUIDE.md`
-- Supabase console task checklist: `docs/harness/supabase-console-tasks-2026-06-03.md`
-- Vercel Supabase next plan: `docs/harness/vercel-supabase-integration-next-plan-2026-06-03.md`
-- Local Docker DB: `docker-compose.yml`, `.env_example`, `ENVIRONMENT_VARIABLE_SETUP.md`
-- Environment variable acquisition guide: `ENVIRONMENT_VARIABLE_SETUP.md` section `2.1 변수값 확보를 시작하기 전에`
-- Environment variable first-read summary: `ENVIRONMENT_VARIABLE_SETUP.md` section `0. 처음 보는 사람을 위한 핵심 요약`
+- Deployment plan: `docs/harness/records/deployment/vercel-supabase-deployment-plan-2026-06-01.md`
+- Vercel Supabase integration guide: `docs/guides/VERCEL_SUPABASE_INTEGRATION_GUIDE.md`
+- Supabase console task checklist: `docs/harness/records/deployment/supabase-console-tasks-2026-06-03.md`
+- Vercel Supabase next plan: `docs/harness/records/deployment/vercel-supabase-integration-next-plan-2026-06-03.md`
+- Local Docker DB: `docker-compose.yml`, `.env_example`, `docs/guides/ENVIRONMENT_VARIABLE_SETUP.md`
+- Environment variable acquisition guide: `docs/guides/ENVIRONMENT_VARIABLE_SETUP.md` section `2.1 변수값 확보를 시작하기 전에`
+- Environment variable first-read summary: `docs/guides/ENVIRONMENT_VARIABLE_SETUP.md` section `0. 처음 보는 사람을 위한 핵심 요약`
 - Vercel SPA routing: `frontend/vercel.json`
 - Frontend API origin: `frontend/src/utils/apiClient.js`
 - Backend runtime settings: `backend/app/core/config.py`
@@ -104,57 +104,57 @@ Local Docker flow:
 - User explicitly requested no verification for the 2026-06-01 implementation pass.
 - User explicitly requested no verification for the 2026-06-02 Docker database compatibility implementation pass.
 - For configuration-only updates, compare `.env_example` variable names against `backend/app/core/config.py` and confirm only placeholders, not secrets, are documented.
-- When `.env_example` gains a variable, update `ENVIRONMENT_VARIABLE_SETUP.md` with how to obtain or decide that value, including whether it is backend-only, frontend-public, generated locally, or provider-issued.
+- When `.env_example` gains a variable, update `docs/guides/ENVIRONMENT_VARIABLE_SETUP.md` with how to obtain or decide that value, including whether it is backend-only, frontend-public, generated locally, or provider-issued.
 - Future checks should include frontend lint/build, backend tests, Alembic migration against a disposable database, `/health`, `/db-check`, and CORS smoke checks.
 
 ## Change Records
 
-- `docs/harness/vercel-supabase-deployment-plan-2026-06-01.md`
-- `docs/harness/vercel-supabase-deployment-implementation-2026-06-01.md`
-- `docs/harness/vercel-supabase-integration-next-plan-2026-06-03.md`
-- `docs/harness/vercel-supabase-integration-documentation-2026-06-03.md`
-- `docs/harness/vercel-supabase-integration-start-2026-06-03.md`
-- `docs/harness/vercel-supabase-db-diagnostics-2026-06-03.md`
-- `docs/harness/supabase-console-tasks-2026-06-03.md`
-- `docs/harness/supabase-asyncpg-url-normalization-2026-06-03.md`
-- `docs/harness/render-database-url-quote-normalization-2026-06-03.md`
-- `docs/harness/favorite-asset-notification-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md`
-- `docs/harness/env-setup-guide-documentation-2026-06-02.md`
-- `docs/harness/env-setup-guide-detail-improvement-2026-06-03.md`
-- `docs/harness/docker-database-compatibility-remediation-plan-2026-06-02.md`
-- `docs/harness/docker-database-compatibility-implementation-2026-06-02.md`
-- `docs/harness/gmail-only-email-notification-implementation-2026-06-02.md`
-- `docs/harness/gmail-telegram-notification-delivery-remediation-implementation-2026-06-08.md`
-- `docs/harness/favorite-asset-report-link-notification-implementation-2026-06-09.md`
-- `docs/harness/report-generation-env-switch-plan-2026-06-03.md`
-- `docs/harness/report-generation-env-switch-implementation-2026-06-03.md`
-- `docs/harness/report-404-and-secret-log-leak-remediation-plan-2026-06-04.md`
-- `docs/harness/report-404-and-secret-log-leak-remediation-implementation-2026-06-04.md`
-- `docs/harness/report-generation-deployment-failure-remediation-plan-2026-06-07.md`
-- `docs/harness/render-standard-market-provider-timeout-remediation-2026-06-07.md`
-- `docs/harness/stooq-timeout-fallback-2026-06-07.md`
-- `docs/harness/report-evaluator-env-switch-plan-2026-06-09.md`
-- `docs/harness/report-evaluator-env-switch-implementation-2026-06-09.md`
-- `docs/harness/toss-payments-billing-auth-phase1-implementation-2026-06-08.md`
-- `docs/harness/demo-free-tier-data-cadence-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-implementation-2026-06-08.md`
-- `docs/harness/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
-- `docs/harness/report-scheduler-startup-firing-fix-implementation-2026-06-08.md`
-- `docs/harness/report-backend-generation-failure-analysis-2026-06-08.md`
-- `docs/harness/report-backend-generation-remediation-plan-2026-06-08.md`
-- `docs/harness/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
-- `docs/harness/report-data-as-of-naive-datetime-fix-2026-06-09.md`
-- `docs/harness/report-final-narrative-only-display-implementation-2026-06-09.md`
+- `docs/harness/records/deployment/vercel-supabase-deployment-plan-2026-06-01.md`
+- `docs/harness/records/deployment/vercel-supabase-deployment-implementation-2026-06-01.md`
+- `docs/harness/records/deployment/vercel-supabase-integration-next-plan-2026-06-03.md`
+- `docs/harness/records/deployment/vercel-supabase-integration-documentation-2026-06-03.md`
+- `docs/harness/records/deployment/vercel-supabase-integration-start-2026-06-03.md`
+- `docs/harness/records/deployment/vercel-supabase-db-diagnostics-2026-06-03.md`
+- `docs/harness/records/deployment/supabase-console-tasks-2026-06-03.md`
+- `docs/harness/records/deployment/supabase-asyncpg-url-normalization-2026-06-03.md`
+- `docs/harness/records/deployment/render-database-url-quote-normalization-2026-06-03.md`
+- `docs/harness/records/notifications/favorite-asset-notification-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md`
+- `docs/harness/records/deployment/env-setup-guide-documentation-2026-06-02.md`
+- `docs/harness/records/deployment/env-setup-guide-detail-improvement-2026-06-03.md`
+- `docs/harness/records/deployment/docker-database-compatibility-remediation-plan-2026-06-02.md`
+- `docs/harness/records/deployment/docker-database-compatibility-implementation-2026-06-02.md`
+- `docs/harness/records/notifications/gmail-only-email-notification-implementation-2026-06-02.md`
+- `docs/harness/records/notifications/gmail-telegram-notification-delivery-remediation-implementation-2026-06-08.md`
+- `docs/harness/records/notifications/favorite-asset-report-link-notification-implementation-2026-06-09.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-plan-2026-06-03.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-implementation-2026-06-03.md`
+- `docs/harness/records/ai-report/report-404-and-secret-log-leak-remediation-plan-2026-06-04.md`
+- `docs/harness/records/ai-report/report-404-and-secret-log-leak-remediation-implementation-2026-06-04.md`
+- `docs/harness/records/ai-report/report-generation-deployment-failure-remediation-plan-2026-06-07.md`
+- `docs/harness/records/deployment/render-standard-market-provider-timeout-remediation-2026-06-07.md`
+- `docs/harness/records/market-data/stooq-timeout-fallback-2026-06-07.md`
+- `docs/harness/records/ai-report/report-evaluator-env-switch-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-evaluator-env-switch-implementation-2026-06-09.md`
+- `docs/harness/records/billing/toss-payments-billing-auth-phase1-implementation-2026-06-08.md`
+- `docs/harness/records/market-data/demo-free-tier-data-cadence-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
+- `docs/harness/records/ai-report/report-scheduler-startup-firing-fix-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-backend-generation-failure-analysis-2026-06-08.md`
+- `docs/harness/records/ai-report/report-backend-generation-remediation-plan-2026-06-08.md`
+- `docs/harness/records/ai-report/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-data-as-of-naive-datetime-fix-2026-06-09.md`
+- `docs/harness/records/ai-report/report-final-narrative-only-display-implementation-2026-06-09.md`
 
 ## Open Risks
 
 - Hosted backend provider and exact production/staging domains still need to be chosen before final environment values can be set.
 - Supabase direct connection versus pooler mode must be tested with SQLAlchemy asyncpg before production traffic.
 - Scheduler should start disabled for the first smoke release and be enabled only after API, DB, cost, and rate-limit checks. After enabling on Render Standard, confirm whether startup report logs show `리포트 생성 완료`, `ReportReadinessError`, `ReportQualityError`, or primary provider timeout before broadening report targets.
-- AI report generation recovery should proceed one target at a time. Even when scheduler startup is fixed, provider readiness, OpenAI availability, quality gates, and DB commit can independently keep `ai_reports` empty; see `docs/harness/report-backend-generation-failure-analysis-2026-06-08.md`.
+- AI report generation recovery should proceed one target at a time. Even when scheduler startup is fixed, provider readiness, OpenAI availability, quality gates, and DB commit can independently keep `ai_reports` empty; see `docs/harness/records/ai-report/report-backend-generation-failure-analysis-2026-06-08.md`.
 - Existing local `postgres_data` volumes can preserve old DB user/password/name values. Resetting a volume is a data-loss action and needs explicit confirmation.
 - The data.go.kr `serviceKey` was confirmed exposed in 2026-06-03 runtime WARNING logs and must be rotated at the issuer with Render env vars updated. Other provider keys (Finnhub token, FRED `api_key`, ECOS key, Stooq `apikey`) that may have appeared in logs are also treated as compromised; the code guards only prevent future re-exposure.

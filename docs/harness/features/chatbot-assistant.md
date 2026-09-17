@@ -4,7 +4,7 @@ Date: 2026-05-31
 
 ## Current Behavior
 
-The app has a financial navigation and explanation assistant. By default it is rule-based: it does not store server-side conversations, does not stream responses, does not call an LLM, and does not trigger AI report generation. Report answers must continue to use the latest stored `AIReport`, matching the scheduled-report-only target documented in `docs/harness/report-generation-schedule-alignment-plan-2026-06-01.md`. Subscription behavior now limits chatbot visibility and API access to active Pro users only.
+The app has a financial navigation and explanation assistant. By default it is rule-based: it does not store server-side conversations, does not stream responses, does not call an LLM, and does not trigger AI report generation. Report answers must continue to use the latest stored `AIReport`, matching the scheduled-report-only target documented in `docs/harness/records/ai-report/report-generation-schedule-alignment-plan-2026-06-01.md`. Subscription behavior now limits chatbot visibility and API access to active Pro users only.
 
 ### Optional LLM intent path (2026-06-04)
 
@@ -101,24 +101,24 @@ For the 2026-05-31 implementation request, verification commands were intentiona
 
 ## Change Records
 
-- `docs/harness/chatbot-feature-plan-2026-05-31.md`
-- `docs/harness/chatbot-feature-implementation-2026-05-31.md`
-- `docs/harness/chatbot-implementation-verification-2026-06-01.md`
-- `docs/harness/report-generation-schedule-alignment-plan-2026-06-01.md`
-- `docs/harness/report-generation-schedule-alignment-implementation-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-plan-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-implementation-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
-- `docs/harness/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md`
-- `docs/harness/report-generation-env-switch-plan-2026-06-03.md`
-- `docs/harness/report-generation-env-switch-implementation-2026-06-03.md`
-- `docs/harness/chatbot-llm-intent-upgrade-plan-2026-06-04.md`
-- `docs/harness/chatbot-llm-intent-upgrade-implementation-2026-06-04.md`
-- `docs/harness/chatbot-multiturn-10turns-implementation-2026-06-08.md`
+- `docs/harness/records/chatbot/chatbot-feature-plan-2026-05-31.md`
+- `docs/harness/records/chatbot/chatbot-feature-implementation-2026-05-31.md`
+- `docs/harness/records/chatbot/chatbot-implementation-verification-2026-06-01.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-implementation-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-implementation-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-plan-2026-06-01.md`
+- `docs/harness/records/billing/subscription-tier-payment-provider-db-implementation-2026-06-01.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-plan-2026-06-03.md`
+- `docs/harness/records/ai-report/report-generation-env-switch-implementation-2026-06-03.md`
+- `docs/harness/records/chatbot/chatbot-llm-intent-upgrade-plan-2026-06-04.md`
+- `docs/harness/records/chatbot/chatbot-llm-intent-upgrade-implementation-2026-06-04.md`
+- `docs/harness/records/chatbot/chatbot-multiturn-10turns-implementation-2026-06-08.md`
 
 ## Open Risks
 

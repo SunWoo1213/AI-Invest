@@ -41,13 +41,13 @@ Supported groups include major indices, US/Korean stocks, bonds, commodities, an
    - US bonds use `fetch_us_bond_history` so FRED observation dates are preserved.
    - US stocks fetch the primary quote from Finnhub and use FMP EOD history/profile as optional support. Finnhub profile, FMP profile, FMP history, or opt-in Stooq fallback failures do not discard a successful Finnhub quote; market cap degrades to `0.0` and history falls back to the current price.
    - US indices and commodities use FMP quote/EOD history first. FMP responses are cached with a 12-hour TTL and guarded by a process-local daily call budget so the 5-minute scheduler does not burn through the free plan. If FMP is missing, over budget, or unavailable, they degrade to empty data unless `ENABLE_STOOQ_FALLBACK=true` provides a Stooq fallback.
-   - Nasdaq index: as of 2026-06-10 the dashboard data is **NASDAQ Composite** sourced from **FRED** series `NASDAQCOM` (canonical ticker `^IXIC`, `FRED_INDEX_SYMBOLS`), not NASDAQ-100/Stooq. The user-facing **label is "Nasdaq100"** (display string only; the underlying series is NASDAQCOM). The macro response key / Home `dataKey` is `"Nasdaq100"` and `ASSET_NAMES["^IXIC"]="Nasdaq100"`. Stooq's free CSV path stopped returning data even with a freshly issued key (empty 200 for all symbols on both `.com`/`.pl`), so the index was moved to FRED. `fetch_fred_history`/`_fetch_fred_snapshot` parse FRED observations (missing `"."` carried forward, oldest→latest), and the snapshot change is **the latest FRED observation day vs the prior observation day** (EOD, ~1–2 business-day lag). `STOOQ_PRIMARY_SYMBOLS` is now empty; FMP is still not used for the index. `^GSPC` keeps FMP-first + opt-in Stooq fallback. See `docs/harness/nasdaq-composite-fred-source-implementation-2026-06-10.md` (history: `docs/harness/nasdaq-index-stooq-primary-implementation-2026-06-09.md`).
+   - Nasdaq index: as of 2026-06-10 the dashboard data is **NASDAQ Composite** sourced from **FRED** series `NASDAQCOM` (canonical ticker `^IXIC`, `FRED_INDEX_SYMBOLS`), not NASDAQ-100/Stooq. The user-facing **label is "Nasdaq100"** (display string only; the underlying series is NASDAQCOM). The macro response key / Home `dataKey` is `"Nasdaq100"` and `ASSET_NAMES["^IXIC"]="Nasdaq100"`. Stooq's free CSV path stopped returning data even with a freshly issued key (empty 200 for all symbols on both `.com`/`.pl`), so the index was moved to FRED. `fetch_fred_history`/`_fetch_fred_snapshot` parse FRED observations (missing `"."` carried forward, oldest→latest), and the snapshot change is **the latest FRED observation day vs the prior observation day** (EOD, ~1–2 business-day lag). `STOOQ_PRIMARY_SYMBOLS` is now empty; FMP is still not used for the index. `^GSPC` keeps FMP-first + opt-in Stooq fallback. See `docs/harness/records/market-data/nasdaq-composite-fred-source-implementation-2026-06-10.md` (history: `docs/harness/records/market-data/nasdaq-index-stooq-primary-implementation-2026-06-09.md`).
    - Crypto uses CoinGecko Demo API.
    - Korean stocks and Korean indices use 공공데이터포털 금융위원회 stock/index price APIs. The index API matches `idxNm` by the Korean index name (`코스피`/`코스닥`); the English forms return empty results.
-   - USD/KRW (`KRW=X`) uses open.er-api.com daily reference rate for the current price. As of 2026-06-10 the **day-over-day change display is removed**: `_fetch_fx_snapshot` returns the live rate only, `changePercent=0.0`, `history_prices=[current]`, and `change_source="none"`. The Stooq daily-close dependency for FX change was dropped (`STOOQ_FX_SYMBOLS` is now empty), and the frontend hides the change badge for `KRW=X` (Home/MarketSnapshot/CategoryView/AssetDetail). See `docs/harness/nasdaq-composite-fred-source-implementation-2026-06-10.md` (prior Stooq-based change behavior: `docs/harness/krw-fx-change-percent-not-captured-implementation-2026-06-09.md`).
+   - USD/KRW (`KRW=X`) uses open.er-api.com daily reference rate for the current price. As of 2026-06-10 the **day-over-day change display is removed**: `_fetch_fx_snapshot` returns the live rate only, `changePercent=0.0`, `history_prices=[current]`, and `change_source="none"`. The Stooq daily-close dependency for FX change was dropped (`STOOQ_FX_SYMBOLS` is now empty), and the frontend hides the change badge for `KRW=X` (Home/MarketSnapshot/CategoryView/AssetDetail). See `docs/harness/records/market-data/nasdaq-composite-fred-source-implementation-2026-06-10.md` (prior Stooq-based change behavior: `docs/harness/records/market-data/krw-fx-change-percent-not-captured-implementation-2026-06-09.md`).
    - Stooq history calls are disabled by default. When `ENABLE_STOOQ_FALLBACK=true`, they use `STOOQ_FETCH_TIMEOUT_SECONDS` (default 12 seconds) and stale Stooq cache can be reused after refresh failure.
-   - Bulk warm-up (`_collect_prices_group`) never drops a label on fetch failure. On timeout/exception it carries forward the previously cached payload, or a zero placeholder on cold start, via `_carry_forward_price_payload`. This keeps the home cards from disappearing entirely (the frontend hides any `macro` label that is missing: `Home.jsx` `if (!data) return null`). See `docs/harness/market-card-disappear-on-fetch-failure-fix-2026-06-09.md`.
-   - stooq.com now serves a JavaScript proof-of-work (PoW) anti-bot challenge to plain HTTP clients, and an `apikey` alone does **not** bypass it. `_get_stooq_text` solves the PoW (`SHA-256(c+nonce)` with `d` leading hex zeros), POSTs `c`/`n` to `https://stooq.com/__verify`, persists the verification cookie (`_stooq_verify_cookies`, reused across calls), then retries the apikey request to get the CSV. Without this step every Stooq fetch returned the challenge HTML and degraded to empty. See `docs/harness/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md` and root `STOOQ_APIKEY_GUIDE.md`.
+   - Bulk warm-up (`_collect_prices_group`) never drops a label on fetch failure. On timeout/exception it carries forward the previously cached payload, or a zero placeholder on cold start, via `_carry_forward_price_payload`. This keeps the home cards from disappearing entirely (the frontend hides any `macro` label that is missing: `Home.jsx` `if (!data) return null`). See `docs/harness/records/market-data/market-card-disappear-on-fetch-failure-fix-2026-06-09.md`.
+   - stooq.com now serves a JavaScript proof-of-work (PoW) anti-bot challenge to plain HTTP clients, and an `apikey` alone does **not** bypass it. `_get_stooq_text` solves the PoW (`SHA-256(c+nonce)` with `d` leading hex zeros), POSTs `c`/`n` to `https://stooq.com/__verify`, persists the verification cookie (`_stooq_verify_cookies`, reused across calls), then retries the apikey request to get the CSV. Without this step every Stooq fetch returned the challenge HTML and degraded to empty. See `docs/harness/records/market-data/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md` and root `docs/guides/STOOQ_APIKEY_GUIDE.md`.
 11. Frontend pages select the relevant group and normalize fallback fields such as `points`, `legacy`, `value`, `currentPrice`, and `changePercent`.
 12. `CategoryView.jsx` and `AssetDetail.jsx` both use `getUiCategory` from `frontend/src/utils/assetCategories.js`, so Korean stocks, crypto, bonds, commodities, FX, and macro index tickers share the same display category rules.
 13. Category lists render text-first asset cards without mini graphs, let users favorite individual assets from the rightmost star button, and open favorited assets through the right-side favorites panel.
@@ -73,7 +73,7 @@ Supported groups include major indices, US/Korean stocks, bonds, commodities, an
 - USD/KRW uses open.er-api.com open access data as daily reference FX. It is not treated as realtime trading-grade FX, and ordinary user-facing requests do not trigger fresh report generation.
 - Hosted deployment startup should keep `ENABLE_MARKET_WARMUP=false` and `ENABLE_SCHEDULER=false` for the first smoke release, then enable runtime jobs after API/DB checks and cost review.
 - Optional report scheduler policy controls: `REPORT_SCHEDULER_COVERAGE=conservative`, `REPORT_SCHEDULER_INTERVAL_HOURS=6`, `REPORT_SCHEDULER_STARTUP_DELAY_SECONDS=180`, `REPORT_SCHEDULER_MAX_REPORTS_PER_RUN=5`, `REPORT_SCHEDULER_ASSET_COOLDOWN_HOURS=6`, `REPORT_SCHEDULER_TARGET_TICKERS=DGS10,XAU,BTC-USD,NVDA,005930.KS`. For the NVDA-only demo report policy, use `REPORT_SCHEDULER_TARGET_TICKERS=NVDA` and `REPORT_SCHEDULER_MAX_REPORTS_PER_RUN=1` while keeping `MARKET_LIVE_TICKERS` on the broader demo live allowlist.
-- Target report schedule rule: report generation is backend-scheduled every 6 hours and user/chatbot paths read stored reports only. The 2026-06-01 implementation limits scheduled coverage to five representative assets for API cost control; see `docs/harness/report-generation-schedule-alignment-implementation-2026-06-01.md`.
+- Target report schedule rule: report generation is backend-scheduled every 6 hours and user/chatbot paths read stored reports only. The 2026-06-01 implementation limits scheduled coverage to five representative assets for API cost control; see `docs/harness/records/ai-report/report-generation-schedule-alignment-implementation-2026-06-01.md`.
 - Supported history periods: `1d`, `1mo`, `1y`, `5y`. Free-provider replacement paths return provider-dated daily points for all periods; `1d` is 7 daily points, `1mo` is 30 daily points, `1y` is 365 daily points, and `5y` is 1825 daily points. `1d` is no longer a 5-minute intraday chart.
 - Main market snapshot route: `/market/:ticker`
 - Chat market guidance endpoint: `POST /api/chat/message`
@@ -102,63 +102,63 @@ Supported groups include major indices, US/Korean stocks, bonds, commodities, an
 
 ## Change Records
 
-- `docs/harness/harness-feature-documentation.md`
-- `docs/harness/latest-context-report-quality.md`
-- `docs/harness/main-market-snapshot-and-news.md`
-- `docs/harness/asset-favorites.md`
-- `docs/harness/feature-implementation-fixes-2026-05-31.md`
-- `docs/harness/feature-implementation-fixes-verification-2026-05-31.md`
-- `docs/harness/report-quality-follow-up-implementation-2026-05-31.md`
-- `docs/harness/chatbot-feature-implementation-2026-05-31.md`
-- `docs/harness/report-generation-schedule-alignment-plan-2026-06-01.md`
-- `docs/harness/report-generation-schedule-alignment-implementation-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-plan-2026-06-01.md`
-- `docs/harness/report-writing-method-implementation-2026-06-01.md`
-- `docs/harness/vercel-supabase-deployment-implementation-2026-06-01.md`
-- `docs/harness/favorite-asset-notification-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md`
-- `docs/harness/report-scheduler-structured-output-error-fix-2026-06-02.md`
-- `docs/harness/market-data-refresh-cadence-env-switch-2026-06-03.md`
-- `docs/harness/market-data-provider-migration-plan-2026-06-03.md`
-- `docs/harness/market-data-provider-migration-implementation-2026-06-03.md`
-- `docs/harness/market-data-provider-response-format-audit-plan-2026-06-03.md`
-- `docs/harness/market-data-warmup-provider-throttle-timeout-plan-2026-06-03.md`
-- `docs/harness/market-data-warmup-provider-throttle-timeout-implementation-2026-06-04.md`
-- `docs/harness/market-data-kr-data-go-index-name-throttle-fix-2026-06-04.md`
-- `docs/harness/report-scheduler-market-cache-miss-fallback-2026-06-04.md`
-- `docs/harness/fx-change-percent-from-stooq-2026-06-04.md`
-- `docs/harness/render-standard-market-provider-timeout-remediation-2026-06-07.md`
-- `docs/harness/stooq-timeout-fallback-2026-06-07.md`
-- `docs/harness/market-data-free-plan-stooq-replacement-plan-2026-06-07.md`
-- `docs/harness/market-data-free-plan-stooq-replacement-implementation-2026-06-07.md`
-- `docs/harness/demo-free-tier-data-cadence-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-plan-2026-06-08.md`
-- `docs/harness/data-io-pipeline-remediation-implementation-2026-06-08.md`
-- `docs/harness/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
-- `docs/harness/market-snapshot-price-fallback-and-stale-retention-implementation-2026-06-08.md`
-- `docs/harness/asset-display-graph-removal-plan-2026-06-08.md`
-- `docs/harness/asset-display-graph-removal-implementation-2026-06-08.md`
-- `docs/harness/market-live-ticker-mock-fallback-implementation-2026-06-08.md`
-- `docs/harness/dashboard-indices-live-provider-2026-06-08.md`
-- `docs/harness/dashboard-indices-realtime-api-plan-2026-06-09.md`
-- `docs/harness/dashboard-indices-demo-live-allowlist-implementation-2026-06-09.md`
-- `docs/harness/market-data-daily-price-refresh-plan-2026-06-09.md`
-- `docs/harness/demo-nvda-report-live-market-policy-2026-06-09.md`
-- `docs/harness/demo-nvda-report-live-market-remediation-plan-2026-06-09.md`
-- `docs/harness/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
-- `docs/harness/nasdaq-index-stooq-provider-plan-2026-06-09.md`
-- `docs/harness/nasdaq-index-stooq-primary-implementation-2026-06-09.md`
-- `docs/harness/krw-fx-change-percent-not-captured-plan-2026-06-09.md`
-- `docs/harness/krw-fx-change-percent-not-captured-implementation-2026-06-09.md`
-- `docs/harness/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md`
-- `docs/harness/market-card-disappear-on-fetch-failure-fix-2026-06-09.md`
-- `docs/harness/stooq-empty-history-12h-cache-stuck-fix-2026-06-09.md`
-- `docs/harness/nasdaq-fx-stooq-key-resilience-plan-2026-06-10.md`
-- `docs/harness/nasdaq-stooq-symbol-ndx-to-ndq-2026-06-10.md`
-- `docs/harness/nasdaq-composite-fred-source-plan-2026-06-10.md`
-- `docs/harness/nasdaq-composite-fred-source-implementation-2026-06-10.md`
+- `docs/harness/records/project/harness-feature-documentation.md`
+- `docs/harness/records/ai-report/latest-context-report-quality.md`
+- `docs/harness/records/market-data/main-market-snapshot-and-news.md`
+- `docs/harness/records/user-features/asset-favorites.md`
+- `docs/harness/records/project/feature-implementation-fixes-2026-05-31.md`
+- `docs/harness/records/project/feature-implementation-fixes-verification-2026-05-31.md`
+- `docs/harness/records/ai-report/report-quality-follow-up-implementation-2026-05-31.md`
+- `docs/harness/records/chatbot/chatbot-feature-implementation-2026-05-31.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-generation-schedule-alignment-implementation-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-plan-2026-06-01.md`
+- `docs/harness/records/ai-report/report-writing-method-implementation-2026-06-01.md`
+- `docs/harness/records/deployment/vercel-supabase-deployment-implementation-2026-06-01.md`
+- `docs/harness/records/notifications/favorite-asset-notification-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md`
+- `docs/harness/records/ai-report/report-scheduler-structured-output-error-fix-2026-06-02.md`
+- `docs/harness/records/market-data/market-data-refresh-cadence-env-switch-2026-06-03.md`
+- `docs/harness/records/market-data/market-data-provider-migration-plan-2026-06-03.md`
+- `docs/harness/records/market-data/market-data-provider-migration-implementation-2026-06-03.md`
+- `docs/harness/records/market-data/market-data-provider-response-format-audit-plan-2026-06-03.md`
+- `docs/harness/records/market-data/market-data-warmup-provider-throttle-timeout-plan-2026-06-03.md`
+- `docs/harness/records/market-data/market-data-warmup-provider-throttle-timeout-implementation-2026-06-04.md`
+- `docs/harness/records/market-data/market-data-kr-data-go-index-name-throttle-fix-2026-06-04.md`
+- `docs/harness/records/ai-report/report-scheduler-market-cache-miss-fallback-2026-06-04.md`
+- `docs/harness/records/market-data/fx-change-percent-from-stooq-2026-06-04.md`
+- `docs/harness/records/deployment/render-standard-market-provider-timeout-remediation-2026-06-07.md`
+- `docs/harness/records/market-data/stooq-timeout-fallback-2026-06-07.md`
+- `docs/harness/records/market-data/market-data-free-plan-stooq-replacement-plan-2026-06-07.md`
+- `docs/harness/records/market-data/market-data-free-plan-stooq-replacement-implementation-2026-06-07.md`
+- `docs/harness/records/market-data/demo-free-tier-data-cadence-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-plan-2026-06-08.md`
+- `docs/harness/records/market-data/data-io-pipeline-remediation-implementation-2026-06-08.md`
+- `docs/harness/records/ai-report/report-generation-scheduler-not-firing-log-audit-2026-06-08.md`
+- `docs/harness/records/market-data/market-snapshot-price-fallback-and-stale-retention-implementation-2026-06-08.md`
+- `docs/harness/records/market-data/asset-display-graph-removal-plan-2026-06-08.md`
+- `docs/harness/records/market-data/asset-display-graph-removal-implementation-2026-06-08.md`
+- `docs/harness/records/market-data/market-live-ticker-mock-fallback-implementation-2026-06-08.md`
+- `docs/harness/records/market-data/dashboard-indices-live-provider-2026-06-08.md`
+- `docs/harness/records/market-data/dashboard-indices-realtime-api-plan-2026-06-09.md`
+- `docs/harness/records/market-data/dashboard-indices-demo-live-allowlist-implementation-2026-06-09.md`
+- `docs/harness/records/market-data/market-data-daily-price-refresh-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/demo-nvda-report-live-market-policy-2026-06-09.md`
+- `docs/harness/records/ai-report/demo-nvda-report-live-market-remediation-plan-2026-06-09.md`
+- `docs/harness/records/ai-report/report-not-writing-root-cause-remediation-plan-2026-06-09.md`
+- `docs/harness/records/market-data/nasdaq-index-stooq-provider-plan-2026-06-09.md`
+- `docs/harness/records/market-data/nasdaq-index-stooq-primary-implementation-2026-06-09.md`
+- `docs/harness/records/market-data/krw-fx-change-percent-not-captured-plan-2026-06-09.md`
+- `docs/harness/records/market-data/krw-fx-change-percent-not-captured-implementation-2026-06-09.md`
+- `docs/harness/records/market-data/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md`
+- `docs/harness/records/market-data/market-card-disappear-on-fetch-failure-fix-2026-06-09.md`
+- `docs/harness/records/market-data/stooq-empty-history-12h-cache-stuck-fix-2026-06-09.md`
+- `docs/harness/records/market-data/nasdaq-fx-stooq-key-resilience-plan-2026-06-10.md`
+- `docs/harness/records/market-data/nasdaq-stooq-symbol-ndx-to-ndq-2026-06-10.md`
+- `docs/harness/records/market-data/nasdaq-composite-fred-source-plan-2026-06-10.md`
+- `docs/harness/records/market-data/nasdaq-composite-fred-source-implementation-2026-06-10.md`
 
 ## Open Risks
 
@@ -168,10 +168,10 @@ Supported groups include major indices, US/Korean stocks, bonds, commodities, an
 - New market page API calls should continue to use `frontend/src/utils/apiClient.js`; avoid reintroducing page-level API origin literals.
 - External provider behavior can change without code changes.
 - Free provider constraints remain: FMP Basic is EOD/delayed and limited by daily quota/licensing, Stooq daily CSV is opt-in fallback only, open.er-api.com is daily reference FX with attribution requirements, 공공데이터포털 data can be T+1 despite realtime metadata, and Naver Finance News is a non-contractual page-based source.
-- Follow-up audit items remain for provider response format hardening: open.er-api.com RFC date parsing, 공공데이터포털 serviceKey encoding/row ordering, `period=1d` point-count policy, US bond provider-date preservation, and broader provider failure/cooldown tests. See `docs/harness/market-data-provider-response-format-audit-plan-2026-06-03.md`.
+- Follow-up audit items remain for provider response format hardening: open.er-api.com RFC date parsing, 공공데이터포털 serviceKey encoding/row ordering, `period=1d` point-count policy, US bond provider-date preservation, and broader provider failure/cooldown tests. See `docs/harness/records/market-data/market-data-provider-response-format-audit-plan-2026-06-03.md`.
 - Missing provider keys intentionally degrade affected asset classes to empty snapshots/history/news instead of retrying aggressively.
-- Most provider requests are serialized per provider (`Semaphore(1)`). When many assets share one provider (e.g. `fmp` for US EOD history, `naver_news`), the queue can be slow; assets that exceed the per-asset timeout are skipped for that run. Raising concurrency for those is deferred because it risks free-tier rate limits / IP blocks on FMP, optional Stooq fallback, and Naver. See `docs/harness/market-data-warmup-provider-throttle-timeout-plan-2026-06-03.md`.
-- `data_go_kr` uses `DATA_GO_KR_MAX_CONCURRENCY` (default 2) rather than `Semaphore(1)`. data.go.kr `getStockPriceInfo` can spike to ~20s and the snapshot makes two calls; the concurrency bump + date-window queries + longer internal timeout (`DATA_GO_KR_FETCH_TIMEOUT_SECONDS`) let the KR queue drain across cycles. data.go.kr rate-limits aggressively and returns a `오류발생 알림화면(허용되지 않는 요청)` 404 HTML gateway block under load; the code degrades to DEFAULT + cooldown, but raising concurrency too high increases block frequency. The `getStockMarketIndex` endpoint is slower/flakier than the stock endpoint and may intermittently 404. Use `backend/scripts/probe_data_go.py` to classify data.go.kr reachability. See `docs/harness/market-data-kr-data-go-index-name-throttle-fix-2026-06-04.md`.
+- Most provider requests are serialized per provider (`Semaphore(1)`). When many assets share one provider (e.g. `fmp` for US EOD history, `naver_news`), the queue can be slow; assets that exceed the per-asset timeout are skipped for that run. Raising concurrency for those is deferred because it risks free-tier rate limits / IP blocks on FMP, optional Stooq fallback, and Naver. See `docs/harness/records/market-data/market-data-warmup-provider-throttle-timeout-plan-2026-06-03.md`.
+- `data_go_kr` uses `DATA_GO_KR_MAX_CONCURRENCY` (default 2) rather than `Semaphore(1)`. data.go.kr `getStockPriceInfo` can spike to ~20s and the snapshot makes two calls; the concurrency bump + date-window queries + longer internal timeout (`DATA_GO_KR_FETCH_TIMEOUT_SECONDS`) let the KR queue drain across cycles. data.go.kr rate-limits aggressively and returns a `오류발생 알림화면(허용되지 않는 요청)` 404 HTML gateway block under load; the code degrades to DEFAULT + cooldown, but raising concurrency too high increases block frequency. The `getStockMarketIndex` endpoint is slower/flakier than the stock endpoint and may intermittently 404. Use `backend/scripts/probe_data_go.py` to classify data.go.kr reachability. See `docs/harness/records/market-data/market-data-kr-data-go-index-name-throttle-fix-2026-06-04.md`.
 - Full scheduled report coverage is intentionally not enabled; changing `REPORT_SCHEDULER_COVERAGE` away from `conservative` currently logs a warning and still avoids broad seeding because broader LLM/API usage needs product approval.
 - The report scheduler now wakes every 6 hours and uses a 6-hour per-asset cooldown, but coverage is limited to the configured representative ticker list.
 - Startup report jobs are delayed by `REPORT_SCHEDULER_STARTUP_DELAY_SECONDS` so broad market warm-up and provider queues can begin first. `ensure_price_cache_for_ticker()` still fills a single report target on cache miss, and US stock snapshots keep successful Finnhub quotes when optional profile/Stooq history calls fail. Provider key absence or primary quote outage still degrades to empty data/readiness block.

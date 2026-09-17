@@ -85,29 +85,29 @@ Runtime variables are documented by name only: `ENABLE_NOTIFICATION_SCHEDULER`, 
 - Backend API/service tests: `python -m pytest tests/test_favorites_api.py tests/test_notifications_api.py tests/test_notification_service.py`
 - Migration check: `python -m alembic upgrade head`
 - Frontend checks: `npm run lint`, `npm run build`
-- Telegram 발송 하네스 검증 절차: `docs/harness/telegram-message-delivery-verification-2026-06-09.md`
+- Telegram 발송 하네스 검증 절차: `docs/harness/records/notifications/telegram-message-delivery-verification-2026-06-09.md`
 
 ## Change Records
 
-- `docs/harness/favorite-asset-notification-implementation-2026-06-02.md`
-- `docs/harness/gmail-only-email-notification-plan-2026-06-02.md`
-- `docs/harness/gmail-only-email-notification-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/project-defect-remediation-plan-2026-06-02.md`
-- `docs/harness/notification-channel-inline-setup-plan-2026-06-04.md`
-- `docs/harness/notification-channel-inline-setup-implementation-2026-06-04.md`
-- `docs/harness/gmail-telegram-notification-delivery-remediation-plan-2026-06-08.md`
-- `docs/harness/gmail-telegram-notification-delivery-remediation-implementation-2026-06-08.md`
-- `docs/harness/notification-delivery-not-sending-diagnosis-2026-06-08.md`
-- `docs/harness/gmail-oauth-refresh-token-setup-documentation-2026-06-08.md`
-- `docs/harness/telegram-message-delivery-verification-2026-06-09.md`
-- `docs/harness/favorite-asset-report-link-notification-plan-2026-06-09.md`
-- `docs/harness/favorite-asset-report-link-notification-implementation-2026-06-09.md`
-- `docs/harness/notification-bilingual-detail-link-message-implementation-2026-06-09.md`
-- `docs/harness/favorite-asset-scheduled-digest-notification-plan-2026-06-09.md`
-- `docs/harness/favorite-asset-scheduled-digest-notification-implementation-2026-06-09.md`
-- `docs/harness/scheduled-digest-localhost-link-fix-plan-2026-06-10.md`
-- `docs/harness/scheduled-digest-localhost-link-fix-implementation-2026-06-10.md`
+- `docs/harness/records/notifications/favorite-asset-notification-implementation-2026-06-02.md`
+- `docs/harness/records/notifications/gmail-only-email-notification-plan-2026-06-02.md`
+- `docs/harness/records/notifications/gmail-only-email-notification-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/project/project-defect-remediation-plan-2026-06-02.md`
+- `docs/harness/records/notifications/notification-channel-inline-setup-plan-2026-06-04.md`
+- `docs/harness/records/notifications/notification-channel-inline-setup-implementation-2026-06-04.md`
+- `docs/harness/records/notifications/gmail-telegram-notification-delivery-remediation-plan-2026-06-08.md`
+- `docs/harness/records/notifications/gmail-telegram-notification-delivery-remediation-implementation-2026-06-08.md`
+- `docs/harness/records/notifications/notification-delivery-not-sending-diagnosis-2026-06-08.md`
+- `docs/harness/records/notifications/gmail-oauth-refresh-token-setup-documentation-2026-06-08.md`
+- `docs/harness/records/notifications/telegram-message-delivery-verification-2026-06-09.md`
+- `docs/harness/records/notifications/favorite-asset-report-link-notification-plan-2026-06-09.md`
+- `docs/harness/records/notifications/favorite-asset-report-link-notification-implementation-2026-06-09.md`
+- `docs/harness/records/notifications/notification-bilingual-detail-link-message-implementation-2026-06-09.md`
+- `docs/harness/records/notifications/favorite-asset-scheduled-digest-notification-plan-2026-06-09.md`
+- `docs/harness/records/notifications/favorite-asset-scheduled-digest-notification-implementation-2026-06-09.md`
+- `docs/harness/records/notifications/scheduled-digest-localhost-link-fix-plan-2026-06-10.md`
+- `docs/harness/records/notifications/scheduled-digest-localhost-link-fix-implementation-2026-06-10.md`
 
 ## Open Risks
 
@@ -117,6 +117,6 @@ Runtime variables are documented by name only: `ENABLE_NOTIFICATION_SCHEDULER`, 
 
 ## MyPage Integration Note
 
-As of `docs/harness/mypage-profile-implementation-2026-06-02.md`, `/mypage` provides Telegram and Google Mail consent toggles through `PUT /api/notifications/preferences`. The legacy `/settings/notifications` route renders the same MyPage screen. Turning off consent does not delete channel connection records.
+As of `docs/harness/records/user-features/mypage-profile-implementation-2026-06-02.md`, `/mypage` provides Telegram and Google Mail consent toggles through `PUT /api/notifications/preferences`. The legacy `/settings/notifications` route renders the same MyPage screen. Turning off consent does not delete channel connection records.
 
-As of `docs/harness/notification-channel-inline-setup-implementation-2026-06-04.md`, `/mypage`의 "수신 동의" 섹션은 각 토글 아래에 채널 연결·검증·해제 인라인 UI를 함께 제공한다. Telegram은 `channels/telegram/connect`→`verify`(숫자 chat_id 입력), Email은 `channels/email/verify`→`confirm`(Gmail 코드)으로 검증하고, 각각 DELETE로 해제한다. 연결된 destination은 화면에서 마스킹 표시된다. `frontend/src/pages/NotificationsSettings.jsx`는 동일 기능을 가지지만 라우팅되지 않는 사장 코드이며, 삭제는 별도 승인 대상이다.
+As of `docs/harness/records/notifications/notification-channel-inline-setup-implementation-2026-06-04.md`, `/mypage`의 "수신 동의" 섹션은 각 토글 아래에 채널 연결·검증·해제 인라인 UI를 함께 제공한다. Telegram은 `channels/telegram/connect`→`verify`(숫자 chat_id 입력), Email은 `channels/email/verify`→`confirm`(Gmail 코드)으로 검증하고, 각각 DELETE로 해제한다. 연결된 destination은 화면에서 마스킹 표시된다. `frontend/src/pages/NotificationsSettings.jsx`는 동일 기능을 가지지만 라우팅되지 않는 사장 코드이며, 삭제는 별도 승인 대상이다.

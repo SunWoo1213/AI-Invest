@@ -21,7 +21,7 @@ allowed-tools: Read, Glob, Grep, Write, Bash(git status:*), Bash(git diff:*)
 ## 2. `git status --short`로 기존 사용자 변경을 확인한다. `.env`나 시크릿은 읽지 않는다.
 
 ## 3. 계획 문서 작성
-`docs/harness/<작업-slug>-plan-2026-06-02.md`에 한국어로 작성한다. 날짜는 오늘(2026-06-02). 다음을 포함한다:
+`docs/harness/records/<영역>/<작업-slug>-plan-2026-06-02.md`에 한국어로 작성한다. 날짜는 오늘(2026-06-02). 다음을 포함한다:
 - **목적(Objective)**
 - **현재 동작 / 목표 동작**
 - **변경 대상 파일** (frontend / backend / DB / 설정 구분)

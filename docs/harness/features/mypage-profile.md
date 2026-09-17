@@ -71,9 +71,9 @@ Nickname rules:
 
 ## Change Records
 
-- `docs/harness/mypage-profile-implementation-2026-06-02.md`
-- `docs/harness/project-gap-remediation-plan-2026-06-02.md`
-- `docs/harness/gmail-only-email-notification-implementation-2026-06-02.md`
+- `docs/harness/records/user-features/mypage-profile-implementation-2026-06-02.md`
+- `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
+- `docs/harness/records/notifications/gmail-only-email-notification-implementation-2026-06-02.md`
 
 ## Open Risks
 
