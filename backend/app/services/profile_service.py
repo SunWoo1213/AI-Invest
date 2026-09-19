@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import User
+from ..core.clock import utcnow
 
 NICKNAME_PATTERN = re.compile(r"^[0-9A-Za-z가-힣 _-]+$")
 MIN_NICKNAME_LENGTH = 2
@@ -72,7 +72,7 @@ async def update_user_nickname(
         raise ValueError(availability["message"])
 
     current_user.nickname = availability["nickname"]
-    current_user.nickname_confirmed_at = datetime.utcnow()
+    current_user.nickname_confirmed_at = utcnow()
     await db.commit()
     await db.refresh(current_user)
     return current_user

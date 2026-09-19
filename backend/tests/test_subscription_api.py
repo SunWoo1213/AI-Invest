@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from datetime import datetime, timedelta
+from datetime import timedelta
 from urllib.parse import parse_qs, urlparse
 
 import pytest
@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.models import Subscription, User
 from app.schemas import SubscriptionStatus, SubscriptionTier
 from billing_test_utils import create_test_sessionmaker
+from app.core.clock import utcnow
 
 
 async def override_db():
@@ -79,7 +80,7 @@ async def test_billing_me_returns_free_entitlements_without_subscription():
 @pytest.mark.asyncio
 async def test_billing_me_returns_db_backed_pro_entitlements():
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     async with Session() as db:
         user = User(email="billing-pro@example.com", nickname="billing-pro")
         db.add(user)
@@ -305,7 +306,7 @@ async def test_billing_checkout_toss_creates_billing_auth_intent(monkeypatch):
 async def test_billing_cancel_marks_subscription_canceled_at_period_end(monkeypatch):
     monkeypatch.setattr(settings, "PAYMENT_PROVIDER", "mock")
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     async with Session() as db:
         user = User(email="cancel@example.com", nickname="cancel")
         db.add(user)

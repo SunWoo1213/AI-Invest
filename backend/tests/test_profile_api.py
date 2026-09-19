@@ -1,4 +1,3 @@
-from datetime import datetime
 import os
 
 import pytest
@@ -13,6 +12,7 @@ os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite:///./test.db")
 from app.api import community, profile
 from app.models import Asset, AssetCategory, User
 from billing_test_utils import create_test_sessionmaker
+from app.core.clock import utcnow
 
 
 @pytest.mark.asyncio
@@ -68,7 +68,7 @@ async def test_comment_create_requires_confirmed_nickname():
     async def override_current_user_confirmed(db=Depends(community.get_db)):
         result = await db.execute(select(User).where(User.email == "profile@example.com"))
         user = result.scalar_one()
-        user.nickname_confirmed_at = datetime.utcnow()
+        user.nickname_confirmed_at = utcnow()
         await db.commit()
         await db.refresh(user)
         return user

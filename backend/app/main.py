@@ -173,17 +173,17 @@ async def lifespan(app: FastAPI):
         async def run_market_warmup() -> None:
             # Run warm-up in the background so the server binds its port and passes
             # health checks immediately; the in-memory cache fills in shortly after.
-            print("[lifespan] initial market cache warm-up started")
+            logger.info("[lifespan] initial market cache warm-up started")
             try:
                 await update_prices_task()
                 await update_news_task()
-                print("[lifespan] initial market cache warm-up completed")
+                logger.info("[lifespan] initial market cache warm-up completed")
             except Exception as exc:
-                print(f"[lifespan] initial market cache warm-up failed: {exc!r}")
+                logger.warning("[lifespan] initial market cache warm-up failed: %s", redact_secrets(repr(exc)))
 
         warmup_task = asyncio.create_task(run_market_warmup())
     else:
-        print("[lifespan] initial market cache warm-up skipped")
+        logger.info("[lifespan] initial market cache warm-up skipped")
 
     scheduler = None
     if settings.ENABLE_SCHEDULER:
@@ -301,14 +301,14 @@ async def lifespan(app: FastAPI):
         else:
             notification_scheduler_status = "notifications: disabled by ENABLE_NOTIFICATION_SCHEDULER"
         scheduler.start()
-        print(
+        logger.info(
             "[lifespan] scheduler started "
             f"(prices:{settings.MARKET_PRICES_REFRESH_MINUTES}m, "
             f"news:{settings.MARKET_NEWS_REFRESH_MINUTES}m, "
             f"{report_scheduler_status}, {notification_scheduler_status})"
         )
     else:
-        print("[lifespan] scheduler skipped")
+        logger.info("[lifespan] scheduler skipped")
 
     app.state.scheduler = scheduler
     app.state.warmup_task = warmup_task
@@ -324,7 +324,7 @@ async def lifespan(app: FastAPI):
                 pass
         if scheduler is not None:
             scheduler.shutdown(wait=False)
-            print("[lifespan] scheduler stopped")
+            logger.info("[lifespan] scheduler stopped")
 
 
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)

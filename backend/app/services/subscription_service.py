@@ -12,6 +12,7 @@ from ..schemas import (
     SubscriptionStatus,
     SubscriptionTier,
 )
+from ..core.clock import utcnow
 
 
 @dataclass(frozen=True)
@@ -110,7 +111,7 @@ def _coerce_status(value: str | None) -> SubscriptionStatus:
 
 
 def _now() -> datetime:
-    return datetime.utcnow()
+    return utcnow()
 
 
 def normalize_subscription_snapshot(subscription: SubscriptionSnapshot) -> SubscriptionSnapshot:

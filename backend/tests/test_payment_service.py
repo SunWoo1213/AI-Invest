@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
 from sqlalchemy import select
@@ -15,6 +15,7 @@ from app.services.payment_service import (
     process_webhook_event,
 )
 from billing_test_utils import create_test_sessionmaker, signed_json_headers
+from app.core.clock import utcnow
 
 
 def test_get_payment_provider_defaults_to_mock_when_unset(monkeypatch):
@@ -46,7 +47,7 @@ def test_mock_webhook_signature_validation(monkeypatch):
 async def test_valid_activation_webhook_creates_subscription(monkeypatch):
     monkeypatch.setattr(settings, "PAYMENT_PROVIDER", "mock")
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     provider = MockPaymentProvider()
     payload = {
         "id": "evt_activate",
@@ -87,7 +88,7 @@ async def test_valid_activation_webhook_creates_subscription(monkeypatch):
 async def test_duplicate_webhook_is_idempotent(monkeypatch):
     monkeypatch.setattr(settings, "PAYMENT_PROVIDER", "mock")
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     provider = MockPaymentProvider()
     payload = {
         "id": "evt_duplicate",

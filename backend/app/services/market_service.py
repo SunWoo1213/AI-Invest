@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from datetime import datetime, timezone
 from typing import Any
 
 from ..core.cache import market_cache
 from ..core.config import settings
+from ..core.log_sanitizer import redact_secrets
+
 try:
     from app.services.demo_market_data import (
         is_live_market_ticker,
@@ -23,6 +26,8 @@ except ModuleNotFoundError:
     from .demo_market_data import is_live_market_ticker, mock_latest_context, mock_news_items, mock_price_payload
     from .macro_service import fetch_commodity_data, fetch_kr_bond_data, fetch_us_bond_data
     from .price_providers import fetch_latest_provider_context, fetch_market_news_items, fetch_market_snapshot
+
+logger = logging.getLogger(__name__)
 
 INDICES = {
     "S&P 500": "^GSPC",
@@ -320,13 +325,14 @@ async def ensure_price_cache_for_ticker(ticker: str) -> dict[str, Any] | None:
                     timeout=settings.MARKET_PRICE_FETCH_TIMEOUT_SECONDS,
                 )
             except asyncio.TimeoutError:
-                print(
-                    f"[ensure_price_cache_for_ticker] {label}({asset_ticker}, {payload['category']}) failed: "
-                    f"timeout after {settings.MARKET_PRICE_FETCH_TIMEOUT_SECONDS}s"
+                logger.warning(
+                    "[ensure_price_cache_for_ticker] %s failed: timeout after %ss",
+                    f"{label}({asset_ticker}, {payload['category']})",
+                    settings.MARKET_PRICE_FETCH_TIMEOUT_SECONDS,
                 )
                 return None
             except Exception as exc:
-                print(f"[ensure_price_cache_for_ticker] {label}({asset_ticker}, {payload['category']}) failed: {exc!r}")
+                logger.warning("[ensure_price_cache_for_ticker] %s failed: %s", f"{label}({asset_ticker}, {payload['category']})", redact_secrets(repr(exc)))
                 return None
 
             cached_payload = {"symbol": payload["ticker"], **_to_frontend_shape(normalized)}
@@ -366,13 +372,14 @@ async def _collect_prices_group(
             normalized = await asyncio.wait_for(fetch_asset_data(ticker, category), timeout=timeout_seconds)
             results[label] = {"symbol": ticker, **_to_frontend_shape(normalized)}
         except asyncio.TimeoutError:
-            print(
-                f"[update_prices_task] {label}({ticker}, {category}) failed: "
-                f"timeout after {settings.MARKET_PRICE_FETCH_TIMEOUT_SECONDS}s"
+            logger.warning(
+                "[update_prices_task] %s failed: timeout after %ss",
+                f"{label}({ticker}, {category})",
+                settings.MARKET_PRICE_FETCH_TIMEOUT_SECONDS,
             )
             results[label] = _carry_forward_price_payload(group_name, label, ticker)
         except Exception as exc:
-            print(f"[update_prices_task] {label}({ticker}, {category}) failed: {exc!r}")
+            logger.warning("[update_prices_task] %s failed: %s", f"{label}({ticker}, {category})", redact_secrets(repr(exc)))
             results[label] = _carry_forward_price_payload(group_name, label, ticker)
 
     await asyncio.gather(*(collect_one(label, payload) for label, payload in assets.items()))
@@ -392,12 +399,13 @@ async def _collect_news_group(group_name: str, tickers: dict[str, str]) -> tuple
             news_data = await asyncio.wait_for(fetch_market_news_items(symbol), timeout=timeout_seconds)
             results[label] = {"symbol": symbol, "items": news_data}
         except asyncio.TimeoutError:
-            print(
-                f"[update_news_task] {label}({symbol}) failed: "
-                f"timeout after {settings.MARKET_NEWS_FETCH_TIMEOUT_SECONDS}s"
+            logger.warning(
+                "[update_news_task] %s failed: timeout after %ss",
+                f"{label}({symbol})",
+                settings.MARKET_NEWS_FETCH_TIMEOUT_SECONDS,
             )
         except Exception as exc:
-            print(f"[update_news_task] {label}({symbol}) failed: {exc!r}")
+            logger.warning("[update_news_task] %s failed: %s", f"{label}({symbol})", redact_secrets(repr(exc)))
 
     await asyncio.gather(*(collect_one(label, symbol) for label, symbol in tickers.items()))
     return group_name, results
@@ -414,7 +422,7 @@ async def update_prices_task() -> None:
     )
     market_cache["prices"] = {group_name: data for group_name, data in grouped}
     market_cache["last_updated"]["prices"] = datetime.now(timezone.utc).isoformat()
-    print("[update_prices_task] cache updated")
+    logger.info("[update_prices_task] cache updated")
 
 
 async def update_news_task() -> None:
@@ -427,4 +435,4 @@ async def update_news_task() -> None:
     )
     market_cache["news"] = {group_name: data for group_name, data in grouped}
     market_cache["last_updated"]["news"] = datetime.now(timezone.utc).isoformat()
-    print("[update_news_task] cache updated")
+    logger.info("[update_news_task] cache updated")

@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship, Mapped, mapped_column
 from typing import List, Optional
 
 from .db.base import Base  # Assuming this exists at backend/app/db/base.py
+from .core.clock import utcnow
 
 
 def get_kst_now() -> datetime:
@@ -35,7 +36,7 @@ class User(Base):
     google_sub: Mapped[Optional[str]] = mapped_column(String, unique=True, index=True, nullable=True)
     nickname: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     nickname_confirmed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
     # 양방향 관계 맵핑
     comments: Mapped[List["Comment"]] = relationship("Comment", back_populates="user", cascade="all, delete-orphan")
@@ -110,7 +111,7 @@ class AIReport(Base):
     risk_summary: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     analysis_framework: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     metadata_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow)
 
     # 양방향 관계 맵핑
     asset: Mapped["Asset"] = relationship("Asset", back_populates="reports")
@@ -189,8 +190,8 @@ class Subscription(Base):
     cancel_at_period_end: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     canceled_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="subscriptions")
     billing_events: Mapped[List["BillingEvent"]] = relationship("BillingEvent", back_populates="subscription")
@@ -214,7 +215,7 @@ class BillingEvent(Base):
     payload_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     normalized_summary: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    received_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    received_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     processed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     subscription: Mapped[Optional["Subscription"]] = relationship("Subscription", back_populates="billing_events")
@@ -236,8 +237,8 @@ class UserFavoriteAsset(Base):
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     category_key: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)
     source: Mapped[str] = mapped_column(String(30), nullable=False, default="manual")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="favorite_assets")
     asset: Mapped[Optional["Asset"]] = relationship("Asset", back_populates="favorite_links")
@@ -257,7 +258,7 @@ class NotificationPreference(Base):
     quiet_hours_start: Mapped[Optional[str]] = mapped_column(String(5), nullable=True)
     quiet_hours_end: Mapped[Optional[str]] = mapped_column(String(5), nullable=True)
     timezone: Mapped[str] = mapped_column(String(80), nullable=False, default="Asia/Seoul")
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="notification_preferences")
 
@@ -278,8 +279,8 @@ class NotificationChannelConnection(Base):
     verification_code: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     verification_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="notification_channels")
 
@@ -297,8 +298,8 @@ class NotificationRule(Base):
     event_type: Mapped[str] = mapped_column(String(40), nullable=False)
     threshold_json: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, onupdate=utcnow, nullable=False)
 
     user: Mapped["User"] = relationship("User", back_populates="notification_rules")
 
@@ -311,7 +312,7 @@ class AssetNotificationSnapshot(Base):
     last_change_percent: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     last_news_fingerprints: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)
     last_report_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("ai_reports.id"), nullable=True)
-    evaluated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    evaluated_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
 
 
 class NotificationEvent(Base):
@@ -337,7 +338,7 @@ class NotificationEvent(Base):
     error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     next_attempt_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     sent_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     user: Mapped["User"] = relationship("User", back_populates="notification_events")

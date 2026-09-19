@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..core.config import settings
 from ..models import BillingEvent, Subscription, User
 from ..schemas import SubscriptionStatus, SubscriptionTier
+from ..core.clock import utcnow
 
 
 class PaymentProviderUnavailable(RuntimeError):
@@ -559,7 +560,7 @@ async def create_toss_billing_auth_session(
     intent_id = generate_toss_intent_id()
     customer_key = generate_toss_customer_key()
     order_name = f"Project Finance {tier.value} 월 구독"
-    expires_at = datetime.utcnow() + timedelta(minutes=30)
+    expires_at = utcnow() + timedelta(minutes=30)
     success_redirect = append_query_params(success_url, {"provider": "toss", "intent_id": intent_id})
     fail_redirect = append_query_params(fail_url, {"provider": "toss", "intent_id": intent_id})
     summary = {
@@ -585,7 +586,7 @@ async def create_toss_billing_auth_session(
             user_id=user.id,
             payload_hash=payload_hash,
             normalized_summary=summary,
-            received_at=datetime.utcnow(),
+            received_at=utcnow(),
         )
     )
     await db.commit()
@@ -616,7 +617,7 @@ async def get_toss_billing_auth_intent(
 
     summary = event.normalized_summary
     expires_at = parse_datetime(summary.get("expires_at"))
-    if expires_at and expires_at <= datetime.utcnow():
+    if expires_at and expires_at <= utcnow():
         return None
 
     tier = parse_tier(summary.get("tier"))
@@ -660,7 +661,7 @@ async def activate_mock_subscription(
     if not plan_id:
         raise PaymentProviderUnavailable(f"{tier.value} payment plan is not configured.")
 
-    now = datetime.utcnow()
+    now = utcnow()
     provider_subscription_id = mock_provider_subscription_id(user.id)
     subscription = await find_subscription_by_provider(db, "mock", provider_subscription_id)
     if subscription is None:
@@ -717,7 +718,7 @@ async def apply_cancellation_result(
     subscription: Subscription,
     result: CancellationResult,
 ) -> Subscription:
-    now = datetime.utcnow()
+    now = utcnow()
     subscription.status = result.status.value
     subscription.cancel_at_period_end = result.cancel_at_period_end
     subscription.canceled_at = now
@@ -745,7 +746,7 @@ async def process_webhook_event(
         user_id=event.user_id,
         payload_hash=event.payload_hash,
         normalized_summary=event.summary,
-        received_at=datetime.utcnow(),
+        received_at=utcnow(),
     )
     db.add(billing_event)
 
@@ -757,7 +758,7 @@ async def process_webhook_event(
             billing_event.subscription = subscription
             billing_event.user_id = subscription.user_id
             billing_event.processed_status = "processed"
-        billing_event.processed_at = datetime.utcnow()
+        billing_event.processed_at = utcnow()
         await db.commit()
     except IntegrityError:
         await db.rollback()
@@ -775,14 +776,14 @@ async def process_webhook_event(
                 payload_hash=event.payload_hash,
                 normalized_summary=event.summary,
                 error_message=str(exc),
-                received_at=datetime.utcnow(),
-                processed_at=datetime.utcnow(),
+                received_at=utcnow(),
+                processed_at=utcnow(),
             )
             db.add(failed_event)
         else:
             failed_event.processed_status = "failed"
             failed_event.error_message = str(exc)
-            failed_event.processed_at = datetime.utcnow()
+            failed_event.processed_at = utcnow()
         await db.commit()
         return WebhookProcessResult(received=True, processed_status="failed")
 
@@ -821,11 +822,11 @@ async def apply_subscription_transition(
             provider_subscription_id=event.provider_subscription_id,
             tier=(event.tier or SubscriptionTier.FREE).value,
             status=event.status.value,
-            created_at=datetime.utcnow(),
+            created_at=utcnow(),
         )
         db.add(subscription)
 
-    now = datetime.utcnow()
+    now = utcnow()
     if event.tier is not None:
         subscription.tier = event.tier.value
     subscription.status = event.status.value

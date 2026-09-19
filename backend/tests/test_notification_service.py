@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
 from sqlalchemy import select
@@ -33,11 +33,12 @@ from app.services.notification_service import (
     send_pending_notifications,
 )
 from billing_test_utils import create_test_sessionmaker
+from app.core.clock import utcnow
 
 
 def _build_paid_subscription(user_id, *, tier=SubscriptionTier.PLUS):
     """외부 발송 게이트(_active_channels)를 통과할 수 있는 활성 유료 구독 객체를 만든다."""
-    now = datetime.utcnow()
+    now = utcnow()
     return Subscription(
         user_id=user_id,
         tier=tier.value,

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
 
@@ -11,6 +11,7 @@ from app.services.subscription_service import (
     get_user_subscription,
 )
 from billing_test_utils import create_test_sessionmaker
+from app.core.clock import utcnow
 
 
 def test_billing_plans_match_target_tiers():
@@ -38,7 +39,7 @@ def test_missing_subscription_is_free_without_paid_entitlements():
 
 
 def test_active_plus_can_view_reports_but_not_chatbot():
-    now = datetime.utcnow()
+    now = utcnow()
     entitlements = build_entitlements(
         SubscriptionSnapshot(
             tier=SubscriptionTier.PLUS,
@@ -69,7 +70,7 @@ def test_active_pro_can_view_reports_and_chatbot():
 
 
 def test_canceled_at_period_end_keeps_paid_access_before_period_end():
-    now = datetime.utcnow()
+    now = utcnow()
     entitlements = build_entitlements(
         SubscriptionSnapshot(
             tier=SubscriptionTier.PRO,
@@ -103,7 +104,7 @@ def test_inactive_paid_subscription_falls_back_to_free_entitlements():
 
 
 def test_period_ended_subscription_is_normalized_to_expired():
-    now = datetime.utcnow()
+    now = utcnow()
     entitlements = build_entitlements(
         SubscriptionSnapshot(
             tier=SubscriptionTier.PRO,
@@ -139,7 +140,7 @@ async def test_get_user_subscription_returns_none_for_no_subscription():
 @pytest.mark.asyncio
 async def test_get_user_subscription_reads_latest_db_snapshot():
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     try:
         async with Session() as db:
             user = User(email="pro@example.com", nickname="pro")

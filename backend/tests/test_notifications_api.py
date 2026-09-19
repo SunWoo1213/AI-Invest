@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from types import SimpleNamespace
 
 import pytest
@@ -17,6 +17,7 @@ from app.schemas import SubscriptionStatus, SubscriptionTier
 from app.services import notification_service
 from app.services.notification_service import DeliveryResult
 from billing_test_utils import create_test_sessionmaker
+from app.core.clock import utcnow
 
 
 async def override_current_user():
@@ -25,7 +26,7 @@ async def override_current_user():
 
 async def seed_paid_subscription(Session, *, user_id=1, tier=SubscriptionTier.PLUS):
     """외부 발송 알림 게이트를 통과할 수 있는 활성 유료 구독을 시드한다."""
-    now = datetime.utcnow()
+    now = utcnow()
     async with Session() as db:
         db.add(
             Subscription(

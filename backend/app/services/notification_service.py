@@ -31,6 +31,7 @@ from ..models import (
     UserFavoriteAsset,
 )
 from .subscription_service import build_entitlements, get_user_subscription
+from ..core.clock import utcnow
 
 
 logger = logging.getLogger(__name__)
@@ -137,7 +138,7 @@ def _schedule_label(hour: int, minute: int) -> str:
 
 
 def _now() -> datetime:
-    return datetime.utcnow()
+    return utcnow()
 
 
 def _verification_code() -> str:

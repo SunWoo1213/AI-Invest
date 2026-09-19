@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import pytest
 from fastapi import FastAPI
@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.models import Subscription, User
 from app.schemas import SubscriptionStatus, SubscriptionTier
 from billing_test_utils import create_test_sessionmaker, signed_json_headers
+from app.core.clock import utcnow
 
 
 @pytest.mark.asyncio
@@ -37,7 +38,7 @@ async def test_billing_webhook_valid_activation_updates_subscription(monkeypatch
     monkeypatch.setattr(settings, "PAYMENT_PROVIDER", "mock")
     monkeypatch.setattr(settings, "PAYMENT_WEBHOOK_SECRET", "secret")
     engine, Session = await create_test_sessionmaker()
-    now = datetime.utcnow()
+    now = utcnow()
     payload = {
         "id": "evt_route_activate",
         "type": "subscription.activated",
