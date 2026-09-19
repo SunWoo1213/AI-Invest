@@ -91,9 +91,11 @@ Document variable names only. Do not write actual client IDs, JWT secrets, token
 - `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
 - `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
 - `docs/harness/records/notifications/favorite-asset-report-link-notification-implementation-2026-06-09.md`
+- `docs/harness/records/auth/secret-key-default-removed-2026-09-19.md`
 
 ## Open Risks
 
+- `SECRET_KEY` has no default. Non-development environments refuse to start without it, and the previously hardcoded value is rejected.
 - Existing databases should be aligned through the current Alembic workflow before production-like startup, especially for auth-related user columns such as `users.google_sub`.
 - Auth tests are not yet documented as present.
 - Auth UI now uses the shared frontend API client; future auth API additions should keep using `frontend/src/utils/apiClient.js`.
