@@ -1,3 +1,4 @@
+import hashlib
 import logging
 import secrets
 from pathlib import Path
@@ -10,8 +11,8 @@ ROOT_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 ALLOWED_DATABASE_URL_SCHEMES = {"postgresql+asyncpg", "sqlite+aiosqlite"}
 POSTGRES_FALLBACK_ENV_NAMES = ("POSTGRES_URL_NON_POOLING", "POSTGRES_URL")
 POSTGRES_SSLMODES_REQUIRING_SSL = {"allow", "prefer", "require", "verify-ca", "verify-full"}
-# 예전에 코드에 하드코딩되어 git 기록에 공개된 값. 설정되어 있어도 거부한다.
-LEAKED_SECRET_KEYS = {"a_very_secure_randomly_generated_string_like_9b0d2a8"}
+# 예전에 코드에 하드코딩되어 git 기록에 공개된 값의 SHA-256. 설정되어 있어도 거부한다(값 자체는 코드에 두지 않는다).
+LEAKED_SECRET_KEY_SHA256 = {"d1be45af970ba14ac1fcb2113bf7f669e94b7b5d9eb8e60b945a937c171f8f63"}
 
 logger = logging.getLogger(__name__)
 
@@ -240,7 +241,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def resolve_secret_key(self) -> "Settings":
-        if self.SECRET_KEY in LEAKED_SECRET_KEYS:
+        if hashlib.sha256(self.SECRET_KEY.encode()).hexdigest() in LEAKED_SECRET_KEY_SHA256:
             raise ValueError("SECRET_KEY uses a publicly leaked value. Generate a new random secret.")
         if not self.SECRET_KEY:
             if self.ENVIRONMENT != "development":

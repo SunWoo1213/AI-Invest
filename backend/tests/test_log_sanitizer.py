@@ -5,13 +5,13 @@ def test_redacts_data_go_kr_service_key_query_param():
     url = (
         "Client error '404 Not Found' for url "
         "'https://apis.data.go.kr/1160100/service/GetStockSecuritiesInfoService/getStockPriceInfo"
-        "?serviceKey=a0baf4653abbfcfc1a4f05eb22d110d52f40f61c6583664e72f8e2f9cf034fd3"
+        "?serviceKey=FAKESERVICEKEY0123456789abcdef0123456789abcdef0123456789abcdef"
         "&resultType=json&pageNo=1'"
     )
 
     sanitized = redact_secrets(url)
 
-    assert "a0baf4653abbfcfc1a4f05eb22d110d52f40f61c6583664e72f8e2f9cf034fd3" not in sanitized
+    assert "FAKESERVICEKEY0123456789abcdef0123456789abcdef0123456789abcdef" not in sanitized
     assert "serviceKey=***" in sanitized
     # 비민감 파라미터는 보존된다.
     assert "resultType=json" in sanitized
