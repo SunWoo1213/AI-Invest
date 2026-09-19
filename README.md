@@ -1,18 +1,30 @@
 # AI Invest — 글로벌 금융 데이터 & AI 투자 리포트 플랫폼
 
-> 흩어진 글로벌 시장 데이터를 한곳에 모으고, **LangGraph 파이프라인이 규칙 기반 게이트와 LLM 평가로 검증한 AI 투자 리포트**를 구독 등급별로 제공하는 풀스택 웹 서비스입니다. (캡스톤 프로젝트)
+> 흩어진 글로벌 시장 데이터를 한곳에 모으고, **LangGraph 파이프라인이 규칙 기반 게이트와 LLM 평가로 검증한 AI 투자 리포트**를 구독 등급별로 제공하는 웹 서비스입니다. (2인 팀 캡스톤 — 본인은 백엔드 · 배포 담당)
 
-![React](https://img.shields.io/badge/React_19-20232A?logo=react&logoColor=61DAFB)
-![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 ![LangGraph](https://img.shields.io/badge/LangGraph-1C3C3C?logo=langchain&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=white)
+![Render](https://img.shields.io/badge/Render-000000?logo=render&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)
+![React](https://img.shields.io/badge/React_19_(팀원)-20232A?logo=react&logoColor=61DAFB)
+
+## 한눈에 보기
+
+| | |
+| --- | --- |
+| **무엇** | 시장 데이터 대시보드 + LLM이 쓴 투자 리포트를 **코드 게이트로 검증한 뒤에만 저장**해 구독 등급(FREE/PLUS/PRO)별로 제공 |
+| **내 역할** | 2인 팀 중 **백엔드 · 배포** — FastAPI API 46개 · 테이블 14개, LangGraph 리포트 파이프라인, 스케줄러 · 결제 · 알림 · 챗봇 백엔드, Render · Supabase 배포 |
+| **핵심 결정 ①** | **생성은 LLM, 검증은 코드** — 리포트의 모든 숫자를 수집 데이터와 대조하는 규칙 게이트, 실패 시 최대 7회 재작성, 통과본만 저장 |
+| **핵심 결정 ②** | **읽기와 생성의 분리** — 리포트는 스케줄러만 생성(5개 자산 · 6시간), 수동 생성 API는 403 → LLM 비용이 사용자 수와 무관 |
+| **핵심 결정 ③** | **외부 API는 실패한다는 전제** — 공급자 멀티소스 폴백 + 직전 유효값 유지로 한 공급자 장애가 화면 · 리포트를 멈추지 않게 함 |
+| **검증** | pytest 224 케이스 통과(LLM · 외부 API 모킹), 배포 · 운영 이슈 15건을 로그로 원인 추적해 기록([7절](#7-기술적-도전과-해결)) |
+| **한계** | 리포트 품질 · 비용 실측 없음, 결제는 mock, CI 없음 ([13절](#13-한계와-다음-단계)) |
 
 - **팀 구성**: 2인 팀 (캡스톤)
 - **담당 역할**: **백엔드 · 배포 · 서비스 로직 전반** — FastAPI, DB 설계·마이그레이션, LangGraph AI 리포트 파이프라인과 검증 게이트, 스케줄러, 구독·결제, 알림, 챗봇 백엔드, Render · Supabase · Vercel 배포와 운영 트러블슈팅
-  - 프론트엔드(React 화면 구현)는 팀원이 담당했습니다.
+  - 프론트엔드(React 화면 구현)는 팀원이 담당했습니다. 저장소는 본인 계정으로 관리해, 팀원이 작성한 프론트엔드 코드도 본인 계정의 커밋으로 들어가 있습니다.
 - **배포**: Frontend — [Vercel](https://finance-assist-gray.vercel.app) · Backend — Render (Standard, 상시 가동) · DB — Supabase(PostgreSQL)
 - **개발 기간**: 2026.03 ~ 2026.06 (캡스톤 최종 산출물 제출 2026-06-15) — 단계별 내용은 [개발 타임라인](#6-개발-타임라인)
 
@@ -247,7 +259,7 @@ flowchart LR
 | 2026-06-01 ~ 06-03 | 배포 | Vercel + Supabase 연동, Render 백엔드 배포, DB URL·CORS 문제 해결 |
 | 2026-06-04 ~ 06-10 | 운영 안정화 | NVDA fact checker 루프, 로그 키 노출, 공급자 교체, 스케줄러 미발화 수정, Toss 빌링 인증, 알림 digest 전환과 PLUS 제한 |
 | 2026-06-15 | 제출 | 캡스톤 최종 산출물 7종 제출 |
-| 2026-09 | 정리 | 문서 구조 재정리, 포트폴리오 README 작성 |
+| 2026-09 | 정리 | 문서 구조 재정리, 포트폴리오 README 작성, 오래된 테스트 3건 · 리포트 정렬 버그 수정, `.env.example` 동기화, 추적되던 의존성 · 로그 파일 정리 |
 
 **초기 설계에서 바뀐 점**
 
@@ -306,8 +318,9 @@ flowchart LR
 
 ## 9. 테스트와 검증
 
-- **백엔드 테스트**: pytest + pytest-asyncio로 작성했습니다. **23개 파일 · 223 케이스 중 220 통과 / 3 실패**입니다.
-  - 실패 3건은 결제 provider 기본값을 mock 폴백으로 바꾼 뒤 갱신하지 않은 테스트입니다(`test_payment_service.py` 1건, `test_subscription_api.py` 2건).
+- **백엔드 테스트**: pytest + pytest-asyncio로 작성했습니다. **23개 파일 · 224 케이스 전부 통과**합니다.
+  - 정리 과정(2026-09)에서 결제 provider 기본값을 mock 폴백으로 바꾼 뒤 갱신하지 않았던 테스트 3건을 현재 동작에 맞게 고쳤습니다.
+  - 같은 시각에 저장된 리포트 두 건 중 "최신"을 고르는 정렬이 정해지지 않아 가끔 실패하던 테스트를 찾아, 최신 리포트 조회 4곳의 정렬에 `id`를 보조 키로 추가했습니다.
   - DB는 SQLite(aiosqlite)를 쓰고, 외부 API와 LLM 호출은 monkeypatch로 대체해 실제 호출 없이 검증합니다.
 - **검증 범위**: 품질 게이트, 리포트 생성 스위치, 권한(401/403), 결제 웹훅 서명·멱등성, 공급자 폴백·타임아웃, 로그 마스킹, 알림 digest, 챗봇 grounding 등을 다룹니다.
 - **검증 기록**: 주요 변경마다 검증 기록을 남겼습니다(예: [구독 결제 검증](docs/harness/records/billing/subscription-tier-payment-verification-2026-06-01.md)).
@@ -324,7 +337,7 @@ flowchart LR
 | Database | PostgreSQL 15 (Docker / Supabase), 테스트용 SQLite(aiosqlite) |
 | 인증 | Google OAuth (google-auth), JWT (python-jose) |
 | 외부 연동 | Finnhub, FMP, CoinGecko, FRED, 공공데이터포털, 한국은행 ECOS, Stooq, open.er-api, Naver 뉴스 검색, Gmail API, Telegram Bot API, Toss Payments |
-| 테스트 | pytest, pytest-asyncio (23개 파일 · 223 케이스) |
+| 테스트 | pytest, pytest-asyncio (23개 파일 · 224 케이스) |
 | 배포 | Vercel (FE), Render Standard (BE), Supabase (DB) |
 
 ## 11. 프로젝트 구조
@@ -397,10 +410,8 @@ npm run dev
 - **스케줄러 구조**: in-process 스케줄러라 상시 가동 인스턴스 1개를 전제로 합니다. 수평 확장이나 서버리스로 옮기려면 외부 cron 또는 작업 큐로 분리해야 합니다.
 - **보안 잔여 과제**: Supabase RLS는 조치 계획까지만 세운 상태입니다. 로그에 노출됐던 키의 교체는 운영 작업으로 남아 있습니다.
 - **테스트·환경 관리**
-  - 실패 테스트 3건을 갱신해야 합니다.
   - CI와 프론트엔드 테스트가 없습니다.
   - `requirements.txt` 버전이 고정되어 있지 않아 uv 전환을 계획했습니다([계획](docs/harness/records/deployment/uv-migration-plan-2026-06-03.md)).
-  - 환경변수 검사 스크립트가 `.env.example` 누락 8건(`ENABLE_LLM_CHATBOT`, `REPORT_MAX_REVISIONS` 등)을 보고하고 있습니다.
 - **데이터**: 무료 티어 한도 때문에 실시간 데이터는 9개 티커, AI 리포트는 5개 자산으로 제한했습니다.
 - **방학 로드맵**: 데이터 파이프라인 안정화, 리포트 품질, 결제 실연동을 검토합니다([07-방학-목표](docs/deliverables/07-방학-목표.md), [summer-roadmap](docs/harness/records/project/summer-roadmap-2026-06-18-to-08-28.md)).
 
