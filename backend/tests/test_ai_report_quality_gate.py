@@ -19,6 +19,7 @@ from app.services.graph.nodes import (
     bear_agent_node,
     bull_agent_node,
     evaluator_bypass_node,
+    evaluator_node,
     fact_checker_node,
     qualitative_claim_checker_node,
     report_format_validator_node,
@@ -799,6 +800,39 @@ def test_evaluator_bypass_node_marks_report_passed_after_deterministic_gates():
     assert result["is_pass"] is True
     assert result["evaluator_skipped"] is True
     assert "ENABLE_REPORT_EVALUATOR=false" in result["feedback"]
+
+
+def test_evaluator_prompt_gives_today_and_data_as_of(monkeypatch):
+    """편집장이 학습 시점을 '현재'로 착각해 최신 데이터를 거부하지 않도록 날짜 기준을 프롬프트에 넣는다."""
+    from langchain_core.runnables import RunnableLambda
+
+    from app.services.graph import nodes
+
+    captured = {}
+
+    def fake_llm(prompt_value):
+        captured["text"] = prompt_value.to_string()
+        return EvaluationResult(is_pass=True, feedback="ok")
+
+    monkeypatch.setattr(nodes, "_llm_with_flexible_structured_output", lambda schema: RunnableLambda(fake_llm))
+    monkeypatch.setattr(nodes, "utcnow", lambda: __import__("datetime").datetime(2026, 9, 19, 13, 0))
+
+    result = evaluator_node(
+        {
+            "ticker": "NVDA",
+            "draft_report": "기준 시각: 2026-09-19 12:55 UTC",
+            "structured_facts": {"data_as_of": "2026-09-19T12:55:00Z", "data_limitations": ["베타 데이터 없음"]},
+            "report_facts": {"missing_required_facts": ["valuation_or_beta"]},
+            "revision_count": 2,
+        }
+    )
+
+    assert "2026-09-19 13:00 UTC" in captured["text"]
+    assert "2026-09-19T12:55:00Z" in captured["text"]
+    assert "- 베타 데이터 없음" in captured["text"]
+    assert "- valuation_or_beta" in captured["text"]
+    assert result["is_pass"] is True
+    assert result["revision_count"] == 3
 
 
 def test_role_nodes_derive_separate_views_without_llm():

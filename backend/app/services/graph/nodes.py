@@ -10,6 +10,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel, Field
 
+from ...core.clock import utcnow
 from ..external_api_service import (
     fetch_coingecko_data_structured,
     fetch_finnhub_news_structured,
@@ -1080,22 +1081,49 @@ def evaluator_bypass_node(state: AgentState) -> dict[str, Any]:
     }
 
 
+def _evaluator_time_context(state: AgentState) -> dict[str, str]:
+    """편집장이 '최신성'을 자기 학습 시점이 아니라 실제 날짜로 판단하도록 오늘 날짜와 데이터 기준 시각을 준다."""
+    structured_facts = state.get("structured_facts", {}) or {}
+    report_facts = state.get("report_facts", {}) or {}
+    data_as_of = (
+        structured_facts.get("data_as_of")
+        or (report_facts.get("price") or {}).get("as_of")
+        or "알 수 없음"
+    )
+    limitations = _list_from_facts(structured_facts.get("data_limitations") or report_facts.get("data_limitations"))
+    missing_required = _list_from_facts(report_facts.get("missing_required_facts"))
+    return {
+        "today_utc": utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "data_as_of": str(data_as_of),
+        "known_limitations": "\n".join(f"- {item}" for item in [*limitations, *missing_required]) or "- 없음",
+    }
+
+
 def evaluator_node(state: AgentState) -> dict[str, Any]:
     ticker = state.get("ticker", "")
     logger.info("graph_node: evaluator_node start (ticker=%s)", ticker)
-    current_year = datetime.now().year
     llm = _llm_with_flexible_structured_output(EvaluationResult)
     prompt = ChatPromptTemplate.from_template(
         "당신은 깐깐한 편집장이다.\n"
-        f"1) {current_year}년 최신성, 2) 팩트 무결성, 3) 한국어 품질, "
-        "4) 데이터 한계 표기, 5) 지원되지 않은 숫자/주장 존재 여부를 평가하라.\n"
-        "하나라도 미흡하면 FAIL과 구체 피드백, 완벽하면 PASS를 반환하라.\n\n"
+        "오늘 날짜는 {today_utc}이고, 이 리포트의 데이터 기준 시각은 {data_as_of}이다. "
+        "당신이 학습한 시점이 아니라 이 날짜를 '현재'로 본다.\n"
+        "다음 5가지를 평가하라.\n"
+        "1) 최신성: 리포트에 적힌 기준 시각이 데이터 기준 시각과 맞고, 오래된 정보를 현재 상황처럼 쓰지 않았는가.\n"
+        "2) 팩트 무결성: 리포트의 사실이 structured_facts와 모순되지 않는가.\n"
+        "3) 한국어 품질.\n"
+        "4) 데이터 한계 표기: 아래 '알려진 데이터 한계'가 리포트에 드러나 있는가. "
+        "한계가 명시되어 있으면 그 데이터가 없다는 사실 자체는 FAIL 사유가 아니다. "
+        "없는 데이터를 있는 것처럼 쓰거나 한계를 숨긴 경우만 FAIL이다.\n"
+        "5) structured_facts로 뒷받침되지 않는 숫자/주장이 있는가.\n"
+        "하나라도 미흡하면 FAIL과 구체 피드백, 모두 충족하면 PASS를 반환하라.\n\n"
+        "알려진 데이터 한계:\n{known_limitations}\n\n"
         "draft_report:\n{draft_report}\n\n"
         "structured_facts:\n{structured_facts}\n"
     )
     chain = prompt | llm
     result: EvaluationResult = chain.invoke(
         {
+            **_evaluator_time_context(state),
             "draft_report": state.get("draft_report", ""),
             "structured_facts": state.get("structured_facts", {}),
         }
