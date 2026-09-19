@@ -1,3 +1,5 @@
+import logging
+import secrets
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
@@ -8,6 +10,10 @@ ROOT_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 ALLOWED_DATABASE_URL_SCHEMES = {"postgresql+asyncpg", "sqlite+aiosqlite"}
 POSTGRES_FALLBACK_ENV_NAMES = ("POSTGRES_URL_NON_POOLING", "POSTGRES_URL")
 POSTGRES_SSLMODES_REQUIRING_SSL = {"allow", "prefer", "require", "verify-ca", "verify-full"}
+# 예전에 코드에 하드코딩되어 git 기록에 공개된 값. 설정되어 있어도 거부한다.
+LEAKED_SECRET_KEYS = {"a_very_secure_randomly_generated_string_like_9b0d2a8"}
+
+logger = logging.getLogger(__name__)
 
 
 def normalize_database_url(value: str) -> str:
@@ -82,7 +88,7 @@ class Settings(BaseSettings):
     DB_PREPARED_STATEMENT_CACHE_SIZE: int | None = None
 
     # JWT Authentication
-    SECRET_KEY: str = "a_very_secure_randomly_generated_string_like_9b0d2a8"
+    SECRET_KEY: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
@@ -230,6 +236,18 @@ class Settings(BaseSettings):
             parsed.port
         except ValueError as exc:
             raise ValueError("DATABASE_URL contains an invalid port.") from exc
+        return self
+
+    @model_validator(mode="after")
+    def resolve_secret_key(self) -> "Settings":
+        if self.SECRET_KEY in LEAKED_SECRET_KEYS:
+            raise ValueError("SECRET_KEY uses a publicly leaked value. Generate a new random secret.")
+        if not self.SECRET_KEY:
+            if self.ENVIRONMENT != "development":
+                raise ValueError("SECRET_KEY is required outside development.")
+            # 로컬 개발 편의용: 프로세스마다 임시 키를 만든다. 재시작하면 기존 토큰은 무효가 된다.
+            self.SECRET_KEY = secrets.token_urlsafe(32)
+            logger.warning("SECRET_KEY is not set; using a temporary per-process key for development.")
         return self
 
     @field_validator("DB_PREPARED_STATEMENT_CACHE_SIZE", mode="before")
