@@ -57,6 +57,12 @@ class EvaluationResult(BaseModel):
 
 
 NUMERIC_TOKEN_PATTERN = re.compile(r"(?<![A-Za-z])[-+]?\d[\d,]*(?:\.\d+)?%?")
+# 날짜·시각 표기(2026-09-19, 04:19:57 등)는 금융 수치 주장이 아니므로 숫자 검증 대상에서 뺀다.
+# 빼지 않으면 기준 시각의 "초"(57)가 근거 없는 숫자로 잡혀 폴백이 시각을 망가뜨린다(2026-09-19 로컬 실행에서 발견).
+DATETIME_PATTERN = re.compile(
+    r"\d{4}[-./]\d{1,2}[-./]\d{1,2}(?:[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?"
+    r"|(?<![\d:])\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?![\d:])"
+)
 SENTENCE_SPLIT_PATTERN = re.compile(r"(?<=[.!?。！？])\s+|\n+")
 # writer에 안내하는 허용 숫자 화이트리스트 상한. fact_checker 허용 집합은 무제한이라
 # cap이 낮으면 데이터 풍부 자산에서 필요한 토큰이 안내에서 누락된다. 프롬프트 비대를
@@ -229,11 +235,29 @@ def _fact_number_payload(state: AgentState) -> dict[str, Any]:
     }
 
 
+def _datetime_spans(text: str) -> list[tuple[int, int]]:
+    return [m.span() for m in DATETIME_PATTERN.finditer(text or "")]
+
+
+def _inside_spans(position: int, spans: list[tuple[int, int]]) -> bool:
+    return any(start <= position < end for start, end in spans)
+
+
+def _iter_checked_numeric_tokens(text: str) -> list[str]:
+    """숫자 검증 대상 토큰만 돌려준다(날짜·시각 표기 안의 숫자는 제외)."""
+    spans = _datetime_spans(text)
+    return [
+        m.group(0)
+        for m in NUMERIC_TOKEN_PATTERN.finditer(text or "")
+        if not _inside_spans(m.start(), spans)
+    ]
+
+
 def _find_unsupported_numbers(draft_report: str, state: AgentState) -> list[str]:
     supported_numbers = _collect_supported_numbers(_fact_number_payload(state))
     unsupported: list[str] = []
     seen: set[str] = set()
-    for match in NUMERIC_TOKEN_PATTERN.findall(draft_report or ""):
+    for match in _iter_checked_numeric_tokens(draft_report or ""):
         normalized = _normalize_numeric_token(match)
         if not normalized or normalized in supported_numbers or normalized in seen:
             continue
@@ -250,8 +274,11 @@ def sanitize_unsupported_numbers(draft_report: str, state: AgentState) -> str:
     결정적으로 동작하며(비용 불변), 루프 소진 시 폴백 저장에 사용된다.
     """
     supported_numbers = _collect_supported_numbers(_fact_number_payload(state))
+    spans = _datetime_spans(draft_report or "")
 
     def _replace(match: re.Match[str]) -> str:
+        if _inside_spans(match.start(), spans):
+            return match.group(0)
         normalized = _normalize_numeric_token(match.group(0))
         if not normalized or normalized in supported_numbers:
             return match.group(0)

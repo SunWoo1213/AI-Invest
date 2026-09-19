@@ -965,6 +965,25 @@ def test_sanitize_unsupported_numbers_replaces_only_unsupported():
     assert _find_unsupported_numbers(sanitized, state) == []
 
 
+def test_number_gate_ignores_date_and_time_expressions():
+    # 2026-09-19 로컬 실행에서 기준 시각 04:19:57의 "57"이 근거 없는 숫자로 잡혀
+    # 폴백이 시각을 "04:19:(수치 미확인)"으로 바꾼 회귀를 막는다.
+    state = {
+        "report_facts": {"price": {"value": 4424.9}},
+        "structured_facts": {},
+        "financial_facts": {},
+        "news_facts": {},
+        "macro_facts": {},
+    }
+    draft = "기준 시각: 2026-09-19 04:19:57 (UTC). 현재 가격은 4424.9이며 목표가는 5400입니다."
+
+    assert _find_unsupported_numbers(draft, state) == ["5400"]
+    sanitized = sanitize_unsupported_numbers(draft, state)
+    assert "2026-09-19 04:19:57" in sanitized
+    assert "4424.9" in sanitized
+    assert "5400" not in sanitized
+
+
 @pytest.mark.asyncio
 async def test_generate_report_saves_via_numeric_sanitization_fallback(monkeypatch, cached_aapl):
     clean_sections = (

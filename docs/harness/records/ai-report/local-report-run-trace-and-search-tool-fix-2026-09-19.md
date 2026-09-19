@@ -49,13 +49,14 @@ app.services.ai_service XAU fact_checker 루프 소진 후 숫자 정제 폴백�
 1. **검색 도구 예외가 파이프라인 전체를 멈춤 (수정함)**
    - 원인: `requirements.txt`에 버전이 고정되지 않아 설치된 `ddgs 9.16.0`이 존재하지 않는 `wt.wikipedia.org`를 조회. `DuckDuckGoSearchResults`가 예외를 그대로 던져 에이전트 밖으로 전파됐다.
    - 수정: `backend/app/services/graph/tools.py`의 `search_tool`을 감싸 실패 시 "Search unavailable … use only the market data already provided" 문자열을 반환. 테스트 `backend/tests/test_graph_tools.py` 2건 추가.
-2. **숫자 게이트가 시각 표기의 "초"를 근거 없는 숫자로 판단 (미수정)**
+2. **숫자 게이트가 시각 표기의 "초"를 근거 없는 숫자로 판단 (같은 날 수정)**
    - `57`은 리포트의 기준 시각 `04:19:57`의 초였다. 폴백이 이를 치환해 화면에 `기준 시각: 2026-09-19 04:19:(수치 미확인) (UTC)`로 표시됐다.
-   - 후속: fact checker의 숫자 토큰 추출에서 시각(`HH:MM:SS`) · 날짜 패턴을 제외하거나, writer 프롬프트에 기준 시각을 분 단위로만 쓰게 한다.
+   - 수정: `nodes.py`에 `DATETIME_PATTERN`을 두고 `_find_unsupported_numbers` · `sanitize_unsupported_numbers`가 날짜 · 시각 표기 안의 숫자를 검사하지 않게 했다. 회귀 테스트 `test_number_gate_ignores_date_and_time_expressions` 추가.
+3. **`requirements.txt` 버전 미고정 (같은 날 수정)** — 테스트(227 passed)와 실제 실행에 쓴 버전으로 `==` 고정.
 
 ## 검증
 - `pytest -q -p no:cacheprovider` (backend): 226 passed.
 - 수정 후 XAU 리포트 1건 생성 · 저장, 로컬 화면에서 확인(`docs/images/report.png`).
 
 ## 후속 위험
-- `requirements.txt` 버전 미고정은 그대로다(uv 전환 계획 참고). 다른 라이브러리도 같은 방식으로 깨질 수 있다.
+- 전이 의존성은 잠금 파일이 없어 고정되지 않는다(uv 전환 계획 참고).
