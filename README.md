@@ -51,7 +51,7 @@
 - **팀 구성**: 2인 팀 (캡스톤)
 - **담당 역할**: **백엔드 · 배포 · 서비스 로직 전반** — FastAPI, DB 설계·마이그레이션, LangGraph AI 리포트 파이프라인과 검증 게이트, 스케줄러, 구독·결제, 알림, 챗봇 백엔드, Render · Supabase · Vercel 배포와 운영 트러블슈팅
   - 프론트엔드(React 화면 구현)는 팀원이 담당했습니다. 저장소는 본인 계정으로 관리해, 팀원이 작성한 프론트엔드 코드도 본인 계정의 커밋으로 들어가 있습니다.
-- **배포**: Frontend — [Vercel](https://finance-assist-gray.vercel.app) · Backend — Render (Standard, 상시 가동) · DB — Supabase(PostgreSQL)
+- **배포(캡스톤 기간 운영)**: Frontend — Vercel · Backend — Render (Standard, 상시 가동) · DB — Supabase(PostgreSQL). 지금은 백엔드 서버를 내려 두어 데모 대신 아래 [화면](#화면)과 [실제 실행 기록](#실제-실행-기록-2026-09-19)을 참고해 주세요.
 - **개발 기간**: 2026.03 ~ 2026.06 (캡스톤 최종 산출물 제출 2026-06-15) — 단계별 내용은 [개발 타임라인](#6-개발-타임라인)
 
 ---
