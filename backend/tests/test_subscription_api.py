@@ -143,24 +143,10 @@ async def test_billing_checkout_rejects_free_tier_before_provider_work():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("tier", ["PLUS", "PRO"])
-async def test_billing_checkout_provider_unavailable_returns_clear_error(tier, monkeypatch):
-    monkeypatch.setattr(settings, "PAYMENT_PROVIDER", None)
-    app = FastAPI()
-    app.include_router(billing.router)
-    app.dependency_overrides[billing.get_current_user] = override_current_user
-    app.dependency_overrides[billing.get_db] = override_db
-
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-        response = await client.post("/api/billing/checkout", json={"tier": tier})
-
-    assert response.status_code == 503
-    assert response.json()["detail"] == "Payment provider is not configured."
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("tier", ["PLUS", "PRO"])
-async def test_billing_checkout_mock_activates_subscription_immediately(tier, monkeypatch):
-    monkeypatch.setattr(settings, "PAYMENT_PROVIDER", "mock")
+@pytest.mark.parametrize("provider", ["mock", None])
+async def test_billing_checkout_mock_activates_subscription_immediately(tier, provider, monkeypatch):
+    # 미설정(None)도 mock 즉시 활성화 경로로 들어간다 (resolve_payment_provider_name).
+    monkeypatch.setattr(settings, "PAYMENT_PROVIDER", provider)
     engine, Session = await create_test_sessionmaker()
     async with Session() as db:
         user = User(email="mock-checkout@example.com", nickname="mock-checkout")

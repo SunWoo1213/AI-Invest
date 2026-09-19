@@ -21,3 +21,9 @@ frontend/.npm/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Local-only dependencies, runtime logs, editor settings
+backend/node_modules/
+.pytest_deps/
+.codex-runtime/
+.obsidian/

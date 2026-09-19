@@ -511,7 +511,7 @@ async def get_latest_report(
         select(AIReport, Asset)
         .join(Asset, AIReport.asset_id == Asset.id)
         .where(Asset.ticker == ticker)
-        .order_by(AIReport.created_at.desc())
+        .order_by(AIReport.created_at.desc(), AIReport.id.desc())
         .limit(1)
     )
     result = await db.execute(query)

@@ -794,7 +794,7 @@ async def generate_report_for_ticker(ticker: str, db: AsyncSession) -> dict:
         select(AIReport.final_content)
         .join(Asset, AIReport.asset_id == Asset.id)
         .where(Asset.ticker == ticker)
-        .order_by(AIReport.created_at.desc())
+        .order_by(AIReport.created_at.desc(), AIReport.id.desc())
         .limit(1)
     )
     previous_report = last_report_result.scalar_one_or_none() or ""

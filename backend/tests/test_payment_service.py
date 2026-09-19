@@ -9,7 +9,7 @@ from app.models import BillingEvent, Subscription, User
 from app.schemas import SubscriptionStatus, SubscriptionTier
 from app.services.payment_service import (
     MockPaymentProvider,
-    PaymentProviderUnavailable,
+    TossPaymentsProvider,
     PaymentSignatureVerificationError,
     get_payment_provider,
     process_webhook_event,
@@ -17,11 +17,17 @@ from app.services.payment_service import (
 from billing_test_utils import create_test_sessionmaker, signed_json_headers
 
 
-def test_get_payment_provider_requires_configuration(monkeypatch):
+def test_get_payment_provider_defaults_to_mock_when_unset(monkeypatch):
+    # PAYMENT_PROVIDER가 비어 있으면 데모가 503으로 끊기지 않도록 mock으로 동작한다.
     monkeypatch.setattr(settings, "PAYMENT_PROVIDER", None)
 
-    with pytest.raises(PaymentProviderUnavailable):
-        get_payment_provider()
+    assert isinstance(get_payment_provider(), MockPaymentProvider)
+
+
+def test_get_payment_provider_uses_toss_only_when_explicit(monkeypatch):
+    monkeypatch.setattr(settings, "PAYMENT_PROVIDER", " Toss ")
+
+    assert isinstance(get_payment_provider(), TossPaymentsProvider)
 
 
 def test_mock_webhook_signature_validation(monkeypatch):
