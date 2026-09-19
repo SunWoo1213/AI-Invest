@@ -894,6 +894,8 @@ def test_build_report_facts_adds_crypto_framework(monkeypatch):
 async def test_structured_external_provider_reports_missing_key_without_network(monkeypatch):
     monkeypatch.setattr(external_api_service, "FMP_API_KEY", "")
     monkeypatch.setattr(external_api_service, "FINNHUB_API_KEY", "")
+    # 매핑에 없는 티커는 키 검사 다음 단계에서 걸러지므로, 로컬 .env 유무와 상관없이 가짜 키를 둔다.
+    monkeypatch.setattr(external_api_service, "COINGECKO_DEMO_API_KEY", "test-key")
 
     fmp = await external_api_service.fetch_fmp_financials_structured("AAPL")
     finnhub = await external_api_service.fetch_finnhub_news_structured("AAPL")

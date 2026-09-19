@@ -18,6 +18,8 @@ This index tells future harness agents which feature document to read before cha
 - Architecture / guides / deliverables: `docs/architecture/`, `docs/guides/`, `docs/deliverables/` (색인: `docs/README.md`)
 - Repository docs reorganization record: `docs/harness/records/project/repository-docs-reorganization-2026-09-17.md`
 - print 로그 정리·datetime.utcnow() 교체: `docs/harness/records/project/logging-and-utcnow-cleanup-2026-09-19.md`
+- GitHub Actions 백엔드 테스트 CI 추가·환경 의존 테스트 수정: `docs/harness/records/project/ci-backend-tests-2026-09-19.md`
+- AI 리포트 생성 반복 측정(통과율·비용): `docs/harness/records/ai-report/report-generation-measurement-2026-09-19.md`
 - Project structure documentation update: `docs/harness/records/project/project-structure-documentation-update-2026-06-02.md`
 - Project gap remediation plan: `docs/harness/records/project/project-gap-remediation-plan-2026-06-02.md`
 - Project gap remediation Phase 0-1 implementation: `docs/harness/records/project/project-gap-remediation-phase0-1-implementation-2026-06-02.md`
