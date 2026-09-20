@@ -13,7 +13,7 @@
 
 ## 한눈에 보기
 
-| | |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | |
 | --- | --- |
 | **무엇** | 시장 데이터 대시보드 + LLM이 쓴 투자 리포트를 **코드 게이트로 검증한 뒤에만 저장**해 구독 등급(FREE/PLUS/PRO)별로 제공 |
 | **내 역할** | 2인 팀 중 **백엔드 · 배포** — FastAPI API 41개 · 테이블 14개, LangGraph 리포트 파이프라인, 스케줄러 · 결제 · 알림 · 챗봇 백엔드, Render · Supabase 배포 |
@@ -71,14 +71,14 @@
 
 ## 1. 주요 기능
 
-| 기능 | 설명 | 권한 |
+| 기능| 설명 | 권한|
 | --- | --- | --- |
 | **시장 대시보드** | S&P 500·NASDAQ Composite·KOSPI·USD/KRW 등 주요 지표와 글로벌 뉴스를 한 화면에 표시 | 전체 |
 | **자산 카테고리 탐색** | 미국·한국 주식, 채권(미국·한국 국채), 원자재, 암호화폐, 주요 지표·환율 카테고리 + 검색, 즐겨찾기 | 전체 |
 | **자산 상세** | 시세·등락률·관련 뉴스와 자산별 커뮤니티(댓글·좋아요·신고 **100건 누적 시 자동 삭제**) | 전체 (작성은 로그인 + 닉네임 확정) |
 | **AI 투자 리포트** | 스케줄러가 미리 생성·검증해 저장한 리포트를 조회. 대상은 5개 대표 자산(미 10년물 금리·금·BTC·NVDA·삼성전자) | PLUS 이상 |
 | **즐겨찾기 알림** | 즐겨찾기 자산 요약을 하루 3회(09·13·18시 KST) Gmail / Telegram으로 발송 | PLUS 이상 |
-| **AI 챗봇** | 현재 페이지 맥락과 저장된 데이터만 근거로 답하는 금융 어시스턴트. 기본은 규칙 기반이고 `ENABLE_LLM_CHATBOT`을 켜면 LLM 경로 사용 (최근 10턴 기억) | PRO |
+| **AI 챗봇**<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 현재 페이지 맥락과 저장된 데이터만 근거로 답하는 금융 어시스턴트. 기본은 규칙 기반이고 `ENABLE_LLM_CHATBOT`을 켜면 LLM 경로 사용 (최근 10턴 기억) | PRO<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | **인증** | Google OAuth → JWT 발급, 신규 사용자 자동 가입 | — |
 | **구독 결제** | FREE / PLUS(월 1,000원) / PRO(월 3,000원), 등급별 권한(entitlement) 제어 | — |
 
@@ -117,13 +117,13 @@ flowchart LR
 
 모든 잡은 `coalesce=True`와 `max_instances=1`로 중복 실행을 막습니다.
 
-| 잡 | 트리거 | 기본값 | 활성 조건 |
+| 잡| 트리거 | 기본값| 활성 조건 |
 | --- | --- | --- | --- |
 | 시장 캐시 warm-up | 기동 시 백그라운드 태스크 (포트 바인딩을 막지 않음) | 1회 | `ENABLE_MARKET_WARMUP` |
 | `update_prices_task` | interval | 5분 | `ENABLE_SCHEDULER` |
 | `update_news_task` | interval | 60분 | `ENABLE_SCHEDULER` |
 | `generate_daily_reports` | interval + `next_run_time` | 기동 60초 후 1회, 이후 6시간마다 | + `ENABLE_AI_REPORT_GENERATION` |
-| `notification_digest_HHMM` | cron (Asia/Seoul) | 09:00 · 13:00 · 18:00 | + `ENABLE_NOTIFICATION_SCHEDULER` (기본 off) |
+| `notification_digest_HHMM` | cron (Asia/Seoul) | 09:00 · 13:00 · 18:00<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | + `ENABLE_NOTIFICATION_SCHEDULER` (기본 off) |
 | `notification_delivery` | interval | 1분 (대기 중인 알림 발송) | + `ENABLE_NOTIFICATION_SCHEDULER` |
 
 ## 3. AI 리포트 파이프라인
@@ -154,9 +154,9 @@ flowchart TD
     FB -->|실패| DROP[저장하지 않음]
 ```
 
-| 단계 | 방식 | 역할 |
+| 단계| 방식| 역할 |
 | --- | --- | --- |
-| Readiness Gate | 규칙 | 가격이 없거나 0인 경우, blocking 등급 팩트가 빠진 경우, 원자재·코인 핵심 팩트가 3개 이상 빠진 경우 **LLM 호출 전에 중단**합니다. 일부만 빠진 경우(`limited`)는 한계를 명시한 채로 진행합니다. |
+| Readiness Gate<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 규칙<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 가격이 없거나 0인 경우, blocking 등급 팩트가 빠진 경우, 원자재·코인 핵심 팩트가 3개 이상 빠진 경우 **LLM 호출 전에 중단**합니다. 일부만 빠진 경우(`limited`)는 한계를 명시한 채로 진행합니다. |
 | bull / bear / risk_officer | 규칙 | synthesizer가 만든 구조화 팩트를 상승·하락·리스크 관점으로 나눕니다(LLM 호출 없음). |
 | Format Validator | 규칙 | 고정 10개 섹션(핵심 요약 ~ 투자 유의사항)과 자산군별 분석 토픽의 누락을 검사합니다. |
 | Fact Checker | 규칙 | 리포트의 모든 수치가 수집된 원천 데이터(`allowed_numbers`)에 있는지 대조해 **근거 없는 숫자를 차단**합니다. |
@@ -191,10 +191,10 @@ flowchart TD
 
 무료 티어만으로 안정적인 데모를 만들기 위해, 배포 환경에서 공급자를 여러 차례 교체했습니다([records/market-data](docs/harness/records/market-data/)).
 
-| 시점 | 문제 | 결정 |
+| 시점| 문제 | 결정 |
 | --- | --- | --- |
 | 03월 | — | yfinance 단일 소스로 시작 |
-| 06-03 | Render 데이터센터 IP에서 Yahoo `401 Invalid Crumb` / `429` 발생 | yfinance를 제거하고 Finnhub · CoinGecko · 공공데이터포털 · Stooq · open.er-api · Naver 뉴스 멀티소스(`price_providers.py`)로 교체 |
+| 06-03<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Render 데이터센터 IP에서 Yahoo `401 Invalid Crumb` / `429` 발생 | yfinance를 제거하고 Finnhub · CoinGecko · 공공데이터포털 · Stooq · open.er-api · Naver 뉴스 멀티소스(`price_providers.py`)로 교체 |
 | 06-04 | 공급자 직렬화(`Semaphore(1)`)와 종목별 타임아웃이 충돌해 대량 실패 | 공급자별 타임아웃·동시성 설정을 분리 (data.go.kr 25초, 동시성 2) |
 | 06-07 | Stooq `ConnectTimeout` 반복 | Stooq를 기본 경로에서 제외하고 FMP Basic 무료 플랜 중심으로 재구성 |
 | 06-08 | Finnhub 502 + FMP 402 → 현재가 0이 캐시됨 | 미국 주식 현재가 폴백(Finnhub → FMP → 최근 종가), 전 공급자 실패 시 직전 유효값 유지. 데모용 실시간 티커 allowlist와 mock 데이터 도입 |
@@ -268,21 +268,21 @@ flowchart LR
 
 ## 6. 개발 타임라인
 
-| 기간 | 단계 | 주요 내용 |
+| 기간| 단계| 주요 내용 |
 | --- | --- | --- |
 | 2026-03-18 ~ 03-19 | 프로토타입 | FastAPI + LangGraph 리포트 파이프라인 초안, 시장 데이터 수집, Docker PostgreSQL, 초기 화면 통합 |
 | 2026-05-03 ~ 05-15 | 명세·방향 설정 | 기능 상세 명세서·프로젝트 명세서 작성, 폴더별 `DEVELOPMENT_DIRECTION.md` 가드레일 작성 |
 | 2026-05-30 | 하네스 구축 | `AGENTS.md`, 계획 → 구현 → 검증 → 기록 체계 도입 |
 | 2026-05-30 ~ 06-02 | 핵심 기능 확장 | 리포트 품질 게이트(형식·숫자·정성·평가), 챗봇, 구독 등급·결제, 마이페이지, 즐겨찾기 알림 |
 | 2026-06-01 ~ 06-03 | 배포 | Vercel + Supabase 연동, Render 백엔드 배포, DB URL·CORS 문제 해결 |
-| 2026-06-04 ~ 06-10 | 운영 안정화 | NVDA fact checker 루프, 로그 키 노출, 공급자 교체, 스케줄러 미발화 수정, Toss 빌링 인증, 알림 digest 전환과 PLUS 제한 |
+| 2026-06-04 ~ 06-10<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 운영 안정화<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | NVDA fact checker 루프, 로그 키 노출, 공급자 교체, 스케줄러 미발화 수정, Toss 빌링 인증, 알림 digest 전환과 PLUS 제한 |
 | 2026-06-15 | 제출 | 캡스톤 최종 산출물 7종 제출 |
 
 **초기 설계에서 바뀐 점**
 
-| 초기 설계 | 최종 구현 | 바꾼 이유 |
+| 초기 설계 | 최종 구현 | 바꾼 이유|
 | --- | --- | --- |
-| Next.js/TypeScript 청사진([ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)) | React + Vite + JavaScript | — |
+| Next.js/TypeScript 청사진([ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)) | React + Vite + JavaScript | —<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | 이메일/비밀번호 가입 | Google 로그인 단일 흐름 | — |
 | 사용자 요청 시 리포트 생성 | 스케줄러 전용 생성, 수동 생성 API는 403 | LLM 비용과 응답 속도를 통제하기 위해 |
 | yfinance 단일 소스 | 무료 멀티소스 + 폴백 | 배포 환경에서 차단됨 |
@@ -294,9 +294,9 @@ flowchart LR
 
 **AI 리포트**
 
-| 문제 | 원인 | 해결 | 기록 |
+| 문제 | 원인 | 해결 | 기록|
 | --- | --- | --- | --- |
-| 특정 종목(NVDA) 리포트가 끝없이 재작성되다 404 | Fact Checker가 같은 수치의 부호·표기 차이(`-3.62` vs `3.62`)를 근거 없는 숫자로 판단해 재작성을 반복 | 숫자 부호·표기 정규화, `allowed_numbers`를 writer와 공유, 재작성 한도 초과 시 재검증을 거치는 숫자 정제 폴백 | [근본 원인 분석](docs/harness/records/ai-report/nvda-report-factchecker-loop-root-cause-2026-06-04.md) · [해결 구현](docs/harness/records/ai-report/nvda-factchecker-loop-404-remediation-implementation-2026-06-04.md) |
+| 특정 종목(NVDA) 리포트가 끝없이 재작성되다 404 | Fact Checker가 같은 수치의 부호·표기 차이(`-3.62` vs `3.62`)를 근거 없는 숫자로 판단해 재작성을 반복 | 숫자 부호·표기 정규화, `allowed_numbers`를 writer와 공유, 재작성 한도 초과 시 재검증을 거치는 숫자 정제 폴백 | [근본 원인 분석](docs/harness/records/ai-report/nvda-report-factchecker-loop-root-cause-2026-06-04.md) · [해결 구현](docs/harness/records/ai-report/nvda-factchecker-loop-404-remediation-implementation-2026-06-04.md)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | 배포 환경 리포트 미생성 ① 잡 미발화 | interval 잡의 최초 발화는 기동 +6시간 후인데, 재배포·재시작으로 인스턴스가 그 전에 종료됨. 로그에 "리포트 생성 시작"이 한 번도 없음 | `next_run_time`을 명시해 기동 60초 후 발화, 중복 startup 잡 통합 | [로그 분석](docs/harness/records/ai-report/report-generation-scheduler-not-firing-log-audit-2026-06-08.md) · [수정](docs/harness/records/ai-report/report-scheduler-startup-firing-fix-implementation-2026-06-08.md) |
 | 배포 환경 리포트 미생성 ② 데이터 끝단 | Finnhub 502 + FMP 402로 현재가 0이 캐시됨 → Readiness Gate가 `blocked` 처리. 스케줄러와는 **독립된 차단 지점** | 미국 주식 현재가 폴백 체인, 전 공급자 실패 시 직전 유효값 유지, 가격 0은 캐시하지 않음 | [구현](docs/harness/records/market-data/market-snapshot-price-fallback-and-stale-retention-implementation-2026-06-08.md) |
 | 기동 직후 리포트 잡의 캐시 miss | 비차단 warm-up이 끝나기 전에 리포트 잡이 실행됨 | 리포트 생성 시 종목 단위로 캐시를 채우는 폴백 | [수정](docs/harness/records/ai-report/report-scheduler-market-cache-miss-fallback-2026-06-04.md) |
@@ -305,20 +305,20 @@ flowchart LR
 
 **배포·인프라 / 보안**
 
-| 문제 | 원인 | 해결 | 기록 |
+| 문제 | 원인 | 해결 | 기록|
 | --- | --- | --- | --- |
 | `alembic upgrade head` 시 Supabase 연결 실패 | asyncpg가 `?sslmode=`를 인식하지 못함 | URL 정규화 단계에서 `sslmode` → `ssl` 변환 | [수정](docs/harness/records/deployment/supabase-asyncpg-url-normalization-2026-06-03.md) |
 | Render 기동 시 `DATABASE_URL must use an async ... scheme` | 대시보드 값에 따옴표·공백이 포함됨 | 따옴표를 제거하고, 오류 메시지에 올바른 형식 안내 추가 | [수정](docs/harness/records/deployment/render-database-url-quote-normalization-2026-06-03.md) |
-| 배포된 프론트가 `localhost:8000`을 호출해 CORS/PNA 차단 | `VITE_API_BASE_URL` 미설정으로 기본값 사용 | 코드가 아니라 배포 설정 문제: Vercel `VITE_API_BASE_URL`, 백엔드 `BACKEND_CORS_ORIGINS` 설정 후 재빌드 | [기록](docs/harness/records/deployment/cors-loopback-blocked-2026-06-03.md) |
+| 배포된 프론트가 `localhost:8000`을 호출해 CORS/PNA 차단 | `VITE_API_BASE_URL` 미설정으로 기본값 사용 | 코드가 아니라 배포 설정 문제: Vercel `VITE_API_BASE_URL`, 백엔드 `BACKEND_CORS_ORIGINS` 설정 후 재빌드 | [기록](docs/harness/records/deployment/cors-loopback-blocked-2026-06-03.md)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | Docker DB 값 불일치를 bootstrap이 조용히 통과 | compose 하드코딩 값과 `.env` 불일치, liveness만 확인 | compose가 `.env` 값을 쓰도록 변경, `/db-check` readiness 분리 | [구현](docs/harness/records/deployment/docker-database-compatibility-implementation-2026-06-02.md) |
 | 배포 로그에 외부 API 키가 평문으로 노출됨 | 외부 호출 실패 예외에 키가 담긴 URL이 그대로 포함되고, `httpx` INFO 로그도 요청 URL을 출력 | `redact_secrets`로 키 마스킹, 민감 로거를 WARNING으로 조정, 노출된 키 교체 | [구현](docs/harness/records/ai-report/report-404-and-secret-log-leak-remediation-implementation-2026-06-04.md) |
 
 **시장 데이터 / 알림**
 
-| 문제 | 원인 | 해결 | 기록 |
+| 문제 | 원인 | 해결 | 기록|
 | --- | --- | --- | --- |
 | Render에서 Yahoo 401/429 | 데이터센터 IP 차단과 동시 호출 폭주 | 무료 멀티소스 공급자로 교체 | [구현](docs/harness/records/market-data/market-data-provider-migration-implementation-2026-06-03.md) |
-| 모든 HTTP가 200인데 다수 종목이 빈 `failed:`로 실패 | 공급자 직렬화와 종목별 타임아웃 충돌, `str(TimeoutError())`가 빈 문자열 | 타임아웃·동시성 조정, 예외를 `{exc!r}`로 로깅 | [구현](docs/harness/records/market-data/market-data-warmup-provider-throttle-timeout-implementation-2026-06-04.md) |
+| 모든 HTTP가 200인데 다수 종목이 빈 `failed:`로 실패 | 공급자 직렬화와 종목별 타임아웃 충돌, `str(TimeoutError())`가 빈 문자열 | 타임아웃·동시성 조정, 예외를 `{exc!r}`로 로깅 | [구현](docs/harness/records/market-data/market-data-warmup-provider-throttle-timeout-implementation-2026-06-04.md)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | 지수 카드가 0으로 굳거나 사라짐 | 데이터 공급자 봇 차단(proof-of-work), 빈 응답이 12시간 캐시에 고착 | PoW 대응, 빈 응답 캐시 제외, 수집 실패 시 직전 값 유지, 나스닥을 FRED로 전환 | [PoW 대응](docs/harness/records/market-data/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md) · [캐시 고착](docs/harness/records/market-data/stooq-empty-history-12h-cache-stuck-fix-2026-06-09.md) |
 | 알림 메일 링크가 `localhost`를 가리킴 | 다이제스트 본문 생성 시 개발용 URL 사용 | 발송 직전 링크를 운영 `FRONTEND_BASE_URL`로 보정 | [수정](docs/harness/records/notifications/scheduled-digest-localhost-link-fix-implementation-2026-06-10.md) |
 
@@ -347,10 +347,10 @@ flowchart LR
 
 개발 이후, 게이트가 실제 데이터에서 어떻게 동작하는지 확인하려고 로컬에서 실제 OpenAI · 시세 API로 리포트를 생성해 봤습니다([상세 기록](docs/harness/records/ai-report/local-report-run-trace-and-search-tool-fix-2026-09-19.md)).
 
-| 자산 | 결과 | 무슨 일이 있었나 |
+| 자산| 결과| 무슨 일이 있었나 |
 | --- | --- | --- |
 | NVDA | **저장 안 됨** | LLM 편집장이 "밸류에이션 · 베타 데이터 누락"으로 거부 → 품질 미달 리포트는 저장하지 않는 설계대로 동작 |
-| XAU (금) | **저장됨** (재작성 7회) | 형식 게이트가 "계절성" 토픽 누락으로 3회 거부 → 숫자 게이트가 근거 없는 숫자 `57`을 3회 거부 → 한도 도달 후 숫자 정제 폴백이 `57`만 치환하고 전 게이트 재검증을 통과해 저장 |
+| XAU (금)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **저장됨** (재작성 7회)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 형식 게이트가 "계절성" 토픽 누락으로 3회 거부 → 숫자 게이트가 근거 없는 숫자 `57`을 3회 거부 → 한도 도달 후 숫자 정제 폴백이 `57`만 치환하고 전 게이트 재검증을 통과해 저장 |
 
 실행하면서 결함 2건을 찾았습니다.
 
@@ -377,14 +377,14 @@ flowchart LR
 
 ## 10. 기술 스택
 
-| 영역 | 기술 |
+| 영역| 기술 |
 | --- | --- |
 | Frontend (팀원 담당) | React 19, Vite 8, JavaScript, Tailwind CSS 3, Zustand 5, React Router 7, Axios, react-markdown |
 | Backend | Python, FastAPI, SQLAlchemy 2 (Async) + asyncpg, Pydantic Settings, Alembic, APScheduler, httpx |
 | AI | LangGraph, LangChain (langchain-openai), OpenAI gpt-4o-mini, DuckDuckGo 검색(ddgs) |
 | Database | PostgreSQL 15 (Docker / Supabase), 테스트용 SQLite(aiosqlite) |
 | 인증 | Google OAuth (google-auth), JWT (python-jose) |
-| 외부 연동 | Finnhub, FMP, CoinGecko, FRED, 공공데이터포털, 한국은행 ECOS, Stooq, open.er-api, Naver 뉴스 검색, Gmail API, Telegram Bot API, Toss Payments |
+| 외부 연동<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Finnhub, FMP, CoinGecko, FRED, 공공데이터포털, 한국은행 ECOS, Stooq, open.er-api, Naver 뉴스 검색, Gmail API, Telegram Bot API, Toss Payments |
 | 테스트 | pytest, pytest-asyncio (24개 파일 · 228 케이스) |
 | 배포 | Vercel (FE), Render Standard (BE), Supabase (DB) |
 
@@ -466,7 +466,7 @@ npm run dev
 
 ## 14. 문서
 
-| 분류 | 문서 |
+| 분류| 문서 |
 | --- | --- |
 | 전체 문서 색인 | [docs/README.md](docs/README.md) |
 | 코드 이해 (구조·데이터 흐름) | [CODE_UNDERSTANDING.md](docs/architecture/CODE_UNDERSTANDING.md) |
