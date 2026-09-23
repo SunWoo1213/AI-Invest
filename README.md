@@ -1,6 +1,6 @@
 # AI Invest — 글로벌 금융 데이터 & AI 투자 리포트 플랫폼
 
-> 흩어진 글로벌 시장 데이터를 한곳에 모으고, **LangGraph 파이프라인이 규칙 기반 게이트와 LLM 평가로 검증한 AI 투자 리포트**를 구독 등급별로 제공하는 웹 서비스입니다. (2인 팀 캡스톤디자인 1 — 본인은 백엔드 · 배포 담당)
+> 흩어진 글로벌 시장 데이터를 한곳에 모으고, **LangGraph 파이프라인이 규칙 기반 게이트와 LLM 평가로 검증한 AI 투자 리포트**를 제공하는 웹 서비스입니다. (2인 팀 캡스톤디자인 1 — 본인은 백엔드 · 배포 담당)
 
 [![backend-tests](https://github.com/SunWoo1213/AI-Invest/actions/workflows/backend-tests.yml/badge.svg)](https://github.com/SunWoo1213/AI-Invest/actions/workflows/backend-tests.yml)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
@@ -15,25 +15,23 @@
 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | |
 | --- | --- |
-| **무엇** | 시장 데이터 대시보드 + LLM이 쓴 투자 리포트를 **코드 게이트로 검증한 뒤에만 저장**해 구독 등급(FREE/PLUS/PRO)별로 제공 |
-| **내 역할** | 2인 팀 중 **백엔드 · 배포** — FastAPI API 41개 · 테이블 14개, LangGraph 리포트 파이프라인, 스케줄러 · 결제 · 알림 · 챗봇 백엔드, Render · Supabase 배포 |
+| **무엇** | 시장 데이터 대시보드 + LLM이 쓴 투자 리포트를 **코드 게이트로 검증한 뒤에만 저장**해 제공 |
+| **내 역할** | 2인 팀 중 **백엔드 · 배포** — FastAPI API 41개 · 테이블 14개, LangGraph 리포트 파이프라인, 스케줄러 · 알림 · 챗봇 백엔드, Render · Supabase 배포 |
 | **핵심 결정 ①** | **생성은 LLM, 검증은 코드** — 리포트의 모든 숫자를 수집 데이터와 대조하는 규칙 게이트, 실패 시 최대 7회 재작성, 통과본만 저장 |
 | **핵심 결정 ②** | **읽기와 생성의 분리** — 리포트는 스케줄러만 생성(5개 자산 · 6시간), 수동 생성 API는 403 → LLM 비용이 사용자 수와 무관 |
 | **핵심 결정 ③** | **외부 API는 실패한다는 전제** — 공급자 멀티소스 폴백 + 직전 유효값 유지로 한 공급자 장애가 화면 · 리포트를 멈추지 않게 함 |
-| **검증** | pytest 228 케이스 통과(LLM · 외부 API 모킹, GitHub Actions CI), 배포 · 운영 이슈 15건을 로그로 원인 추적해 기록([7절](#7-기술적-도전과-해결)) |
+| **검증** | pytest 228 케이스 통과(LLM · 외부 API 모킹, GitHub Actions CI), 배포 · 운영 이슈 15건을 로그로 원인 추적해 기록([6절](#6-기술적-도전과-해결)) |
 
 ### 화면
 
 | 대시보드 (지수 · 환율 · 뉴스) | 자산 상세 (시세 · 뉴스 · 발표 일정) |
 | --- | --- |
 | ![대시보드](docs/images/dashboard.png) | ![자산 상세](docs/images/asset-detail.png) |
-| **PRO 챗봇** (기본 규칙 기반, 저장된 데이터만 근거로 답하고 화면 이동 카드 제공) | **요금제** (FREE / PLUS / PRO) |
-| ![챗봇](docs/images/chatbot.png) | ![요금제](docs/images/pricing.png) |
-| **AI 리포트** (게이트를 통과해 저장된 금(XAU) 리포트) | |
-| ![AI 리포트](docs/images/report.png) | |
+| **챗봇** (기본 규칙 기반, 저장된 데이터만 근거로 답하고 화면 이동 카드 제공) | **AI 리포트** (게이트를 통과해 저장된 금(XAU) 리포트) |
+| ![챗봇](docs/images/chatbot.png) | ![AI 리포트](docs/images/report.png) |
 
 - **팀 구성**: 2인 팀 (캡스톤디자인 1)
-- **담당 역할**: **백엔드 · 배포 · 서비스 로직 전반** — FastAPI, DB 설계·마이그레이션, LangGraph AI 리포트 파이프라인과 검증 게이트, 스케줄러, 구독·결제, 알림, 챗봇 백엔드, Render · Supabase · Vercel 배포와 운영 트러블슈팅
+- **담당 역할**: **백엔드 · 배포 · 서비스 로직 전반** — FastAPI, DB 설계·마이그레이션, LangGraph AI 리포트 파이프라인과 검증 게이트, 스케줄러, 알림, 챗봇 백엔드, Render · Supabase · Vercel 배포와 운영 트러블슈팅
   - 프론트엔드(React 화면 구현)는 팀원이 담당했습니다. 저장소는 본인 계정으로 관리해, 팀원이 작성한 프론트엔드 코드도 본인 계정의 커밋으로 들어가 있습니다.
 
 ---
@@ -50,9 +48,8 @@
   - [4. 백엔드 설계 상세](#4-백엔드-설계-상세)
     - [4-1. 데이터 수집과 공급자 변천](#4-1-데이터-수집과-공급자-변천)
     - [4-2. DB와 마이그레이션 전략](#4-2-db와-마이그레이션-전략)
-    - [4-3. 구독·결제 설계](#4-3-구독결제-설계)
-    - [4-4. 알림](#4-4-알림)
-    - [4-5. 보안](#4-5-보안)
+    - [4-3. 알림](#4-3-알림)
+    - [4-4. 보안](#4-4-보안)
   - [5. 배포와 인프라](#5-배포와-인프라)
   - [6. 기술적 도전과 해결](#6-기술적-도전과-해결)
   - [7. AI 코딩 하네스 기반 개발 프로세스](#7-ai-코딩-하네스-기반-개발-프로세스)
@@ -68,16 +65,15 @@
 
 ## 1. 주요 기능
 
-| 기능| 설명 | 권한|
-| --- | --- | --- |
-| **시장 대시보드** | S&P 500·NASDAQ Composite·KOSPI·USD/KRW 등 주요 지표와 글로벌 뉴스를 한 화면에 표시 | 전체 |
-| **자산 카테고리 탐색** | 미국·한국 주식, 채권(미국·한국 국채), 원자재, 암호화폐, 주요 지표·환율 카테고리 + 검색, 즐겨찾기 | 전체 |
-| **자산 상세** | 시세·등락률·관련 뉴스와 자산별 커뮤니티(댓글·좋아요·신고 **100건 누적 시 자동 삭제**) | 전체 (작성은 로그인 + 닉네임 확정) |
-| **AI 투자 리포트** | 스케줄러가 미리 생성·검증해 저장한 리포트를 조회. 대상은 5개 대표 자산(미 10년물 금리·금·BTC·NVDA·삼성전자) | PLUS 이상 |
-| **즐겨찾기 알림** | 즐겨찾기 자산 요약을 하루 3회(09·13·18시 KST) Gmail / Telegram으로 발송 | PLUS 이상 |
-| **AI 챗봇**<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 현재 페이지 맥락과 저장된 데이터만 근거로 답하는 금융 어시스턴트. 기본은 규칙 기반이고 `ENABLE_LLM_CHATBOT`을 켜면 LLM 경로 사용 (최근 10턴 기억) | PRO<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-| **인증** | Google OAuth → JWT 발급, 신규 사용자 자동 가입 | — |
-| **구독 결제** | FREE / PLUS(월 1,000원) / PRO(월 3,000원), 등급별 권한(entitlement) 제어 | — |
+| 기능 | 설명 |
+| --- | --- |
+| **시장 대시보드** | S&P 500·NASDAQ Composite·KOSPI·USD/KRW 등 주요 지표와 글로벌 뉴스를 한 화면에 표시 |
+| **자산 카테고리 탐색** | 미국·한국 주식, 채권(미국·한국 국채), 원자재, 암호화폐, 주요 지표·환율 카테고리 + 검색, 즐겨찾기 |
+| **자산 상세** | 시세·등락률·관련 뉴스와 자산별 커뮤니티(댓글·좋아요·신고 **100건 누적 시 자동 삭제**, 작성은 로그인 + 닉네임 확정) |
+| **AI 투자 리포트** | 스케줄러가 미리 생성·검증해 저장한 리포트를 조회. 대상은 5개 대표 자산(미 10년물 금리·금·BTC·NVDA·삼성전자) |
+| **즐겨찾기 알림** | 즐겨찾기 자산 요약을 하루 3회(09·13·18시 KST) Gmail / Telegram으로 발송 |
+| **AI 챗봇**<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 현재 페이지 맥락과 저장된 데이터만 근거로 답하는 금융 어시스턴트. 기본은 규칙 기반이고 `ENABLE_LLM_CHATBOT`을 켜면 LLM 경로 사용 (최근 10턴 기억) |
+| **인증** | Google OAuth → JWT 발급, 신규 사용자 자동 가입 |
 
 
 ## 2. 시스템 아키텍처
@@ -200,8 +196,8 @@ flowchart TD
 
 ### 4-2. DB와 마이그레이션 전략
 
-- **스키마**: 사용자, 자산, AI 리포트, 커뮤니티, 구독·결제 이벤트, 즐겨찾기, 알림 등 14개 테이블로 구성했습니다([ERD](docs/deliverables/04-ERD.md)).
-- **Alembic 리비전 3개**: 구독·결제 baseline, 즐겨찾기·알림 테이블, 닉네임 확정 컬럼입니다.
+- **스키마**: 사용자, 자산, AI 리포트, 커뮤니티, 즐겨찾기, 알림 등 14개 테이블로 구성했습니다([ERD](docs/deliverables/04-ERD.md)).
+- **Alembic 리비전 3개**로 스키마 변경을 관리합니다.
 - **로컬과 운영의 분리**
   - 로컬(`ENABLE_DB_SCHEMA_BOOTSTRAP=true`)에서는 `create_all`과 `ADD COLUMN IF NOT EXISTS`로 편하게 부트스트랩합니다.
   - 운영(`false`)에서는 스키마를 만들지 않습니다. `alembic upgrade head`를 먼저 적용하고, 기동 시에는 필수 테이블·컬럼을 검증해 누락이 있으면 **기동을 중단**합니다.
@@ -211,27 +207,13 @@ flowchart TD
   - 호스팅 대시보드가 붙인 따옴표를 제거합니다.
   - `DATABASE_URL`이 없으면 Vercel/Supabase가 제공하는 `POSTGRES_URL` 계열을 폴백으로 씁니다.
 
-### 4-3. 구독·결제 설계
-
-- **권한 판정 일원화**: 등급별 권한은 `require_report_access` / `require_chatbot_access` / `require_notification_access` 라우터 의존성 한 곳에서 판정합니다. 인증 실패(401)와 권한 부족(403)을 분리했습니다.
-- **Provider 추상화**: Mock / Toss 구현체를 같은 인터페이스로 교체할 수 있습니다.
-  - 웹훅은 서명(HMAC-SHA256)을 검증합니다.
-  - `billing_events`에서 이벤트 ID로 중복을 제거해 **멱등하게 처리**합니다.
-  - 해지는 기간 말 종료(`cancel_at_period_end`) 방식입니다.
-- **Mock 모드**: 결제 없이 즉시 구독을 활성화합니다. `PAYMENT_PROVIDER=toss`가 아니면 mock으로 동작하므로, 운영에서는 반드시 toss로 지정해야 합니다.
-- **Toss Payments**
-  - checkout 시 billing intent(`customerKey`)를 만들고, 프론트의 Toss 빌링 인증으로 넘어가는 단계까지 구현했습니다.
-  - 빌링키 저장과 정기결제는 빌링키를 안전하게 저장할 DB 마이그레이션이 승인되기 전까지 `501`로 막아 두었습니다.
-- **운영 도구**: 결제를 거치지 않고 등급을 부여하거나 회수하는 관리 스크립트([grant_subscription.py](backend/scripts/grant_subscription.py))를 제공합니다.
-
-### 4-4. 알림
+### 4-3. 알림
 
 - **변화 감지형에서 정시 digest로 전환(06-09)**: 처음에는 가격 급변·뉴스·리포트 변화 감지형으로 설계했습니다. 이후 변화 여부와 관계없이 **하루 3회 정시 digest**를 보내는 방식으로 바꿨습니다. 변화 감지 함수는 코드에 남아 있지만 운영 스케줄러에서는 호출하지 않습니다.
 - **중복 방지**: 같은 사용자·날짜·시각 슬롯의 digest는 dedupe key(`digest:{user}:{date}:{HHMM}`)로 한 번만 생성합니다.
 - **발송 채널**: Gmail은 OAuth refresh token을 쓰고, Telegram은 봇 연결을 검증한 뒤 발송합니다.
-- **등급 제한**: 외부 발송(Gmail·Telegram)은 **발송 시점에 PLUS 이상인지 다시 확인**합니다(06-10).
 
-### 4-5. 보안
+### 4-4. 보안
 
 - **로그 시크릿 노출 차단**
   - `httpx`·`httpcore`·`sqlalchemy.engine` 로거를 WARNING으로 낮췄습니다.
@@ -312,8 +294,8 @@ flowchart LR
 
 - **백엔드 테스트**: pytest + pytest-asyncio로 작성했습니다. **24개 파일 · 228 케이스 전부 통과**합니다.
   - DB는 SQLite(aiosqlite)를 쓰고, 외부 API와 LLM 호출은 monkeypatch로 대체해 실제 호출 없이 검증합니다.
-- **검증 범위**: 품질 게이트, 리포트 생성 스위치, 권한(401/403), 결제 웹훅 서명·멱등성, 공급자 폴백·타임아웃, 로그 마스킹, 알림 digest, 챗봇 grounding 등을 다룹니다.
-- **검증 기록**: 주요 변경마다 검증 기록을 남겼습니다(예: [구독 결제 검증](docs/harness/records/billing/subscription-tier-payment-verification-2026-06-01.md)).
+- **검증 범위**: 품질 게이트, 리포트 생성 스위치, 권한(401/403), 공급자 폴백·타임아웃, 로그 마스킹, 알림 digest, 챗봇 grounding 등을 다룹니다.
+- **검증 기록**: 주요 변경마다 검증 기록을 남겼습니다(예: [NVDA 리포트 404 해결](docs/harness/records/ai-report/nvda-factchecker-loop-404-remediation-implementation-2026-06-04.md)).
 - **배포 후 확인**: Render 로그의 시작 로그 유무로 "잡이 돌았는데 실패"와 "잡이 애초에 발화하지 않음"을 구분했습니다. 확인 절차는 사례집에 정리했습니다.
 - **CI**: GitHub Actions(`backend-tests`)가 push · PR마다 `.env` 없이 더미 설정으로 pytest를 실행합니다.
 - **프론트엔드 테스트는 없습니다.** 프론트엔드(팀원 담당)는 `npm run lint` / `npm run build`로만 확인했습니다.
@@ -359,7 +341,7 @@ flowchart LR
 | AI | LangGraph, LangChain (langchain-openai), OpenAI gpt-4o-mini, DuckDuckGo 검색(ddgs) |
 | Database | PostgreSQL 15 (Docker / Supabase), 테스트용 SQLite(aiosqlite) |
 | 인증 | Google OAuth (google-auth), JWT (python-jose) |
-| 외부 연동<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Finnhub, FMP, CoinGecko, FRED, 공공데이터포털, 한국은행 ECOS, Stooq, open.er-api, Naver 뉴스 검색, Gmail API, Telegram Bot API, Toss Payments |
+| 외부 연동<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Finnhub, FMP, CoinGecko, FRED, 공공데이터포털, 한국은행 ECOS, Stooq, open.er-api, Naver 뉴스 검색, Gmail API, Telegram Bot API |
 | 테스트 | pytest, pytest-asyncio (24개 파일 · 228 케이스) |
 | 배포 | Vercel (FE), Render Standard (BE), Supabase (DB) |
 
@@ -369,16 +351,16 @@ flowchart LR
 Project_Finance/
 ├─ backend/                      # FastAPI 백엔드
 │  ├─ app/
-│  │  ├─ api/                    # 라우터: auth, billing, chat, community, favorites, notifications, profile + deps(권한)
+│  │  ├─ api/                    # 라우터: auth, chat, community, favorites, notifications, profile + deps(권한)
 │  │  ├─ core/                   # 설정·DB URL 정규화, JWT, 캐시, 로그 마스킹
 │  │  ├─ db/                     # Async 엔진·세션
-│  │  ├─ services/               # 시장·거시·공급자·AI·챗봇·결제·구독·알림 비즈니스 로직
+│  │  ├─ services/               # 시장·거시·공급자·AI·챗봇·알림 비즈니스 로직
 │  │  │  └─ graph/               # LangGraph 리포트 워크플로우 (state, nodes, graph, tools)
 │  │  ├─ main.py                 # 앱 진입점, 스키마 검증, 스케줄러, 시장·리포트 엔드포인트
 │  │  ├─ models.py               # SQLAlchemy ORM
 │  │  └─ schemas.py              # Pydantic 스키마
 │  ├─ alembic/                   # DB 마이그레이션 (리비전 3개)
-│  ├─ scripts/                   # 구독 수동 부여, 공공데이터포털 점검
+│  ├─ scripts/                   # 공공데이터포털 점검
 │  └─ tests/                     # pytest
 ├─ frontend/                     # React + Vite 프론트엔드 (vercel.json: SPA rewrite)
 │  └─ src/ (pages, components, store, utils)
@@ -425,7 +407,6 @@ npm run dev
 >   - AI 리포트 생성: `ENABLE_AI_REPORT_GENERATION` (OpenAI 키 필요)
 >   - 알림 스케줄러: `ENABLE_NOTIFICATION_SCHEDULER` (기본 off)
 >   - LLM 챗봇: `ENABLE_LLM_CHATBOT` (기본 off)
->   - 결제 provider: `PAYMENT_PROVIDER` (미설정이면 mock)
 
 ## 12. 문서
 
