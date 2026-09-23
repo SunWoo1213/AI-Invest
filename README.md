@@ -21,7 +21,6 @@
 | **핵심 결정 ②** | **읽기와 생성의 분리** — 리포트는 스케줄러만 생성(5개 자산 · 6시간), 수동 생성 API는 403 → LLM 비용이 사용자 수와 무관 |
 | **핵심 결정 ③** | **외부 API는 실패한다는 전제** — 공급자 멀티소스 폴백 + 직전 유효값 유지로 한 공급자 장애가 화면 · 리포트를 멈추지 않게 함 |
 | **검증** | pytest 228 케이스 통과(LLM · 외부 API 모킹, GitHub Actions CI), 배포 · 운영 이슈 15건을 로그로 원인 추적해 기록([7절](#7-기술적-도전과-해결)) |
-| **한계** | 리포트 품질 게이트를 통과하지 못하는 경우가 남아 있고(상대 시각 표현 · 삼성전자 형식 게이트), 폴백 저장은 편집장 미경유, 결제는 mock ([13절](#13-한계와-다음-단계)) |
 
 ### 화면
 
@@ -55,17 +54,15 @@
     - [4-4. 알림](#4-4-알림)
     - [4-5. 보안](#4-5-보안)
   - [5. 배포와 인프라](#5-배포와-인프라)
-  - [6. 개발 타임라인](#6-개발-타임라인)
-  - [7. 기술적 도전과 해결](#7-기술적-도전과-해결)
-  - [8. AI 코딩 하네스 기반 개발 프로세스](#8-ai-코딩-하네스-기반-개발-프로세스)
-  - [9. 테스트와 검증](#9-테스트와-검증)
-    - [9-1. 실제 실행 기록](#9-1-실제-실행-기록)
-    - [9-2. 반복 측정 20건](#9-2-반복-측정-20건)
-  - [10. 기술 스택](#10-기술-스택)
-  - [11. 프로젝트 구조](#11-프로젝트-구조)
-  - [12. 로컬 실행](#12-로컬-실행)
-  - [13. 한계와 다음 단계](#13-한계와-다음-단계)
-  - [14. 문서](#14-문서)
+  - [6. 기술적 도전과 해결](#6-기술적-도전과-해결)
+  - [7. AI 코딩 하네스 기반 개발 프로세스](#7-ai-코딩-하네스-기반-개발-프로세스)
+  - [8. 테스트와 검증](#8-테스트와-검증)
+    - [8-1. 실제 실행 기록](#8-1-실제-실행-기록)
+    - [8-2. 반복 측정 20건](#8-2-반복-측정-20건)
+  - [9. 기술 스택](#9-기술-스택)
+  - [10. 프로젝트 구조](#10-프로젝트-구조)
+  - [11. 로컬 실행](#11-로컬-실행)
+  - [12. 문서](#12-문서)
 
 ---
 
@@ -266,29 +263,7 @@ flowchart LR
 - **헬스체크 분리**: `/health`는 앱이 살아 있는지만(liveness) 확인하고, `/db-check`는 DB 연결(readiness)을 확인합니다. DB 진단 정보는 자격증명 없이 표시합니다.
 - **운영 비용**: Render Standard 외의 DB(Supabase)와 외부 API는 모두 무료 티어로 운영했습니다. 수집 주기와 대상은 환경변수로 조절합니다.
 
-## 6. 개발 타임라인
-
-| 기간| 단계| 주요 내용 |
-| --- | --- | --- |
-| 2026-03-18 ~ 03-19 | 프로토타입 | FastAPI + LangGraph 리포트 파이프라인 초안, 시장 데이터 수집, Docker PostgreSQL, 초기 화면 통합 |
-| 2026-05-03 ~ 05-15 | 명세·방향 설정 | 기능 상세 명세서·프로젝트 명세서 작성, 폴더별 `DEVELOPMENT_DIRECTION.md` 가드레일 작성 |
-| 2026-05-30 | 하네스 구축 | `AGENTS.md`, 계획 → 구현 → 검증 → 기록 체계 도입 |
-| 2026-05-30 ~ 06-02 | 핵심 기능 확장 | 리포트 품질 게이트(형식·숫자·정성·평가), 챗봇, 구독 등급·결제, 마이페이지, 즐겨찾기 알림 |
-| 2026-06-01 ~ 06-03 | 배포 | Vercel + Supabase 연동, Render 백엔드 배포, DB URL·CORS 문제 해결 |
-| 2026-06-04 ~ 06-10<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 운영 안정화<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | NVDA fact checker 루프, 로그 키 노출, 공급자 교체, 스케줄러 미발화 수정, Toss 빌링 인증, 알림 digest 전환과 PLUS 제한 |
-| 2026-06-15 | 제출 | 캡스톤 최종 산출물 7종 제출 |
-
-**초기 설계에서 바뀐 점**
-
-| 초기 설계 | 최종 구현 | 바꾼 이유|
-| --- | --- | --- |
-| Next.js/TypeScript 청사진([ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)) | React + Vite + JavaScript | —<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-| 이메일/비밀번호 가입 | Google 로그인 단일 흐름 | — |
-| 사용자 요청 시 리포트 생성 | 스케줄러 전용 생성, 수동 생성 API는 403 | LLM 비용과 응답 속도를 통제하기 위해 |
-| yfinance 단일 소스 | 무료 멀티소스 + 폴백 | 배포 환경에서 차단됨 |
-| 변화 감지형 개별 알림 | 하루 3회 정시 digest | 예측 가능한 정시 요약 (채널별 1건) |
-
-## 7. 기술적 도전과 해결
+## 6. 기술적 도전과 해결
 
 개발 중 겪은 문제와 해결 과정은 모두 [`docs/harness/records/`](docs/harness/records/)에 기록했고, 증상 → 원인 → 수정 → 예방 형식으로 [error-casebook](docs/harness/error-casebook-2026-06-03.md)에 모았습니다. 백엔드·배포 영역의 대표 사례입니다.
 
@@ -322,7 +297,7 @@ flowchart LR
 | 지수 카드가 0으로 굳거나 사라짐 | 데이터 공급자 봇 차단(proof-of-work), 빈 응답이 12시간 캐시에 고착 | PoW 대응, 빈 응답 캐시 제외, 수집 실패 시 직전 값 유지, 나스닥을 FRED로 전환 | [PoW 대응](docs/harness/records/market-data/stooq-pow-anti-bot-bypass-implementation-2026-06-09.md) · [캐시 고착](docs/harness/records/market-data/stooq-empty-history-12h-cache-stuck-fix-2026-06-09.md) |
 | 알림 메일 링크가 `localhost`를 가리킴 | 다이제스트 본문 생성 시 개발용 URL 사용 | 발송 직전 링크를 운영 `FRONTEND_BASE_URL`로 보정 | [수정](docs/harness/records/notifications/scheduled-digest-localhost-link-fix-implementation-2026-06-10.md) |
 
-## 8. AI 코딩 하네스 기반 개발 프로세스
+## 7. AI 코딩 하네스 기반 개발 프로세스
 
 이 프로젝트는 **Codex / Claude Code 같은 AI 코딩 에이전트와 함께 개발**했습니다. 에이전트가 아무렇게나 코드를 고치지 않도록 운영 규칙과 문서 체계(하네스)를 먼저 설계했습니다.
 
@@ -333,7 +308,7 @@ flowchart LR
   - 환경변수 정의(`config.py`)와 `.env.example` 사이의 불일치는 수동 검사 스크립트 [scripts/check_env_var_doc_sync.py](scripts/check_env_var_doc_sync.py)(`--check`)로 찾습니다.
   - `.env` 읽기는 [.claude/settings.json](.claude/settings.json)에서 차단합니다. 파괴적 git·파일·DB 명령은 실행 전에 확인을 받습니다.
 
-## 9. 테스트와 검증
+## 8. 테스트와 검증
 
 - **백엔드 테스트**: pytest + pytest-asyncio로 작성했습니다. **24개 파일 · 228 케이스 전부 통과**합니다.
   - DB는 SQLite(aiosqlite)를 쓰고, 외부 API와 LLM 호출은 monkeypatch로 대체해 실제 호출 없이 검증합니다.
@@ -343,7 +318,7 @@ flowchart LR
 - **CI**: GitHub Actions(`backend-tests`)가 push · PR마다 `.env` 없이 더미 설정으로 pytest를 실행합니다.
 - **프론트엔드 테스트는 없습니다.** 프론트엔드(팀원 담당)는 `npm run lint` / `npm run build`로만 확인했습니다.
 
-### 9-1. 실제 실행 기록
+### 8-1. 실제 실행 기록
 
 개발 이후, 게이트가 실제 데이터에서 어떻게 동작하는지 확인하려고 로컬에서 실제 OpenAI · 시세 API로 리포트를 생성해 봤습니다([상세 기록](docs/harness/records/ai-report/local-report-run-trace-and-search-tool-fix-2026-09-19.md)).
 
@@ -358,7 +333,7 @@ flowchart LR
 - **숫자 게이트가 시각 표기의 "초"를 근거 없는 숫자로 판단 → 수정함.** 거부된 `57`은 기준 시각 `04:19:57`의 초였고, 폴백이 이를 치환해 시각이 깨졌습니다. 숫자 검증에서 날짜 · 시각 표기를 빼고 같은 상황을 재현하는 회귀 테스트를 추가했습니다.
 - **버전 미고정 → 수정함.** 검색 도구가 깨진 근본 원인인 `requirements.txt`를 테스트 · 실제 실행에 쓴 버전으로 고정했습니다.
 
-### 9-2. 반복 측정 20건
+### 8-2. 반복 측정 20건
 
 실행 한두 건으로는 통과율과 비용을 알 수 없어서, 스케줄러 대상 5개 자산을 4번씩 같은 조건(로컬 · 임시 DB · 실제 `gpt-4o-mini` · 시세 API)으로 생성했습니다. 처음 측정에서 원인을 찾아 고친 뒤 같은 조건으로 다시 쟀습니다.
 
@@ -375,7 +350,7 @@ flowchart LR
 - **남은 문제**: 편집장 거부 사유가 날짜 오판에서 "'6시간 전' 같은 상대 시각 표현이 모호하다"는 내용 지적으로 바뀌었습니다. 삼성전자(005930.KS)는 0/4로 형식 게이트에서 계속 실패합니다. 20건 표본이라 실행마다 편차가 있고, 운영 서버 수치가 아닙니다
 
 
-## 10. 기술 스택
+## 9. 기술 스택
 
 | 영역| 기술 |
 | --- | --- |
@@ -388,7 +363,7 @@ flowchart LR
 | 테스트 | pytest, pytest-asyncio (24개 파일 · 228 케이스) |
 | 배포 | Vercel (FE), Render Standard (BE), Supabase (DB) |
 
-## 11. 프로젝트 구조
+## 10. 프로젝트 구조
 
 ```text
 Project_Finance/
@@ -419,7 +394,7 @@ Project_Finance/
 └─ DEVELOPMENT_DIRECTION.md      # 개발 방향 가드레일 (하위 폴더별로도 존재)
 ```
 
-## 12. 로컬 실행
+## 11. 로컬 실행
 
 **사전 준비**: Python 3.11+, Node.js 20+, Docker
 
@@ -452,19 +427,7 @@ npm run dev
 >   - LLM 챗봇: `ENABLE_LLM_CHATBOT` (기본 off)
 >   - 결제 provider: `PAYMENT_PROVIDER` (미설정이면 mock)
 
-## 13. 한계와 다음 단계
-
-- **결제**: Toss 빌링키 저장과 정기결제(갱신 스케줄러)는 DB 마이그레이션이 필요해 `501`로 막아 두었습니다. 현재는 mock 즉시 활성화로 데모합니다.
-- **스케줄러 구조**: in-process 스케줄러라 상시 가동 인스턴스 1개를 전제로 합니다. 수평 확장이나 서버리스로 옮기려면 외부 cron 또는 작업 큐로 분리해야 합니다.
-- **보안 잔여 과제**: Supabase RLS는 조치 계획까지만 세운 상태입니다. 로그에 노출됐던 키의 교체는 운영 작업으로 남아 있습니다.
-- **테스트·환경 관리**
-  - 프론트엔드 테스트가 없습니다(백엔드는 CI 있음).
-  - `requirements.txt`는 버전을 고정했습니다. 잠금 파일(uv) 전환은 계획 단계입니다([계획](docs/harness/records/deployment/uv-migration-plan-2026-06-03.md)).
-- **리포트 품질**: 다음 과제는 writer가 상대 시각("6시간 전") 대신 절대 시각을 쓰게 하는 것, 삼성전자 형식 게이트 실패 원인 분석, 폴백 저장본도 편집장 판정을 기록하는 것입니다.
-- **데이터**: 무료 티어 한도 때문에 실시간 데이터는 9개 티커, AI 리포트는 5개 자산으로 제한했습니다.
-- **방학 로드맵**: 데이터 파이프라인 안정화, 리포트 품질, 결제 실연동을 검토합니다([07-방학-목표](docs/deliverables/07-방학-목표.md), [summer-roadmap](docs/harness/records/project/summer-roadmap-2026-06-18-to-08-28.md)).
-
-## 14. 문서
+## 12. 문서
 
 | 분류| 문서 |
 | --- | --- |
