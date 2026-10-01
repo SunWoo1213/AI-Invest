@@ -47,7 +47,7 @@ Date: 2026-06-08
 ## 재시도/실패 처리 동작
 
 - 위치: `backend/app/services/notification_service.py:586-598`
-- 발송 실패 시 `attempts`를 증가시키고, 3회 미만이면 지수 백오프(`2 ** attempts`분: 2/4/8분)로 `next_attempt_at`을 미룬다. `attempts >= 3`이면 `status="failed"`로 확정한다.
+- 발송 실패 시 `attempts`를 증가시키고, 3회 미만이면 지수 백오프(`2 ** attempts`분)로 `next_attempt_at`을 미룬다. `attempts >= 3`이면 `status="failed"`로 확정한다. 증가 뒤에 판정하므로 실제 대기는 2분 · 4분 두 번이고 세 번째 실패에서 `failed`가 된다(2026-10-02 코드 대조로 정정 — 이전 표기 "2/4/8분").
 - 따라서 일시적 실패는 자동 재시도되지만, 관문 1~3이 닫혀 있으면 재시도해도 동일하게 실패한다.
 
 ## Secret 노출 없이 원인을 확인하는 방법
